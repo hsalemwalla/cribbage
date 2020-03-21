@@ -4,10 +4,31 @@
    <meta charset="UTF-8">
    <title>Online Cribbage</title>
    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+   <script defer src="./js/main.js"></script>
 
 </head>
 <body>
-   Hello World
-   
+   <div id="main">
+      <h1> {{ title }} </h1>
+
+      <!--Player name: <input v-model="playerName"> <br>-->
+      Player Name: <input v-model="playerName">
+      <br>
+      <br>
+      Select team: <br>
+      <input type="radio" id="team1" value="team1" v-model="team">
+      <label for="team1">Team 1</label>
+      <br>
+      <input type="radio" id="team2" value="team2" v-model="team">
+      <label for="team2">Team 2</label>
+      <br>
+
+      <button v-on:click="startGame">Start Game</button>
+
+      <div id="start">
+         <span v-if=ready>{{ playerName }} is joining {{ team }} </span>
+      </div>
+   </div>
+
 </body>
 </html>
