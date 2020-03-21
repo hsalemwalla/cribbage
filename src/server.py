@@ -2,6 +2,7 @@ from cribbage import Player, Team, Game
 import copy
 from flask import Flask, jsonify, Response
 from flask_cors import CORS
+import time
 import flask
 
 app = Flask(__name__)
@@ -49,33 +50,36 @@ def start_game():
 
 
 def waiting_for_players():
-    curr_num_players = len(players)
-    setup_data = {'num_players': curr_num_players}
+    try: 
+        curr_num_players = len(players)
+        setup_data = {'num_players': curr_num_players}
 
-    # The first time this is called, we need to respond correctly
-    if curr_num_players == 4:
-        setup_data['ready'] = 'True'
-        global game
-        setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
-    else:
-        setup_data['ready'] = 'False'
-    yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 
-    if curr_num_players < 4:
-        # As this continues to be looping, we need to update our responses with changes
-        while len(players) < 4:
-            print("WAITING FOR PLAYERS")
-            # Update to the right number of players
-            if len(players) != curr_num_players:
-                curr_num_players = len(players)
-                setup_data['num_players'] = curr_num_players
-                yield "data: {}\n\n".format(flask.json.dumps(setup_data))
-
+        # The first time this is called, we need to respond correctly
         if curr_num_players == 4:
-            start_game()
-            setup_data["ready"] = 'True'
+            setup_data['ready'] = 'True'
+            global game
             setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
-            yield "data: {}\n\n".format(flask.json.dumps(setup_data))
+        else:
+            setup_data['ready'] = 'False'
+        yield "data: {}\n\n".format(flask.json.dumps(setup_data))
+
+        if curr_num_players < 4:
+            # As this continues to be looping, we need to update our responses with changes
+            while len(players) < 4:
+                # Update to the right number of players
+                if len(players) != curr_num_players:
+                    curr_num_players = len(players)
+                    setup_data['num_players'] = curr_num_players
+                    yield "data: {}\n\n".format(flask.json.dumps(setup_data))
+
+            if curr_num_players == 4:
+                start_game()
+                setup_data["ready"] = 'True'
+                setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
+                yield "data: {}\n\n".format(flask.json.dumps(setup_data))
+    except:
+        return "data: client closed connection\n\n"
 
 
 @app.route('/gameReady')
