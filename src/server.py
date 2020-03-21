@@ -63,7 +63,7 @@ def waiting_for_players():
                 global game
                 setup_data['ready'] = 'True'
                 setup_data['player_names'] = [p.name for p in game.players]
-            yield "data: {}\n\n".format(setup_data)
+            yield "data: {}\n\n".format(json.dumps(setup_data))
 
 
 @app.route('/gameReady')
