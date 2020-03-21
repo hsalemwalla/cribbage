@@ -10,6 +10,7 @@ CORS(app)
 players = []
 teams = {'team1': Team(),
         'team2': Team()}
+
 game = None
 
 # team1 = Team([players[0], players[1]])
@@ -49,21 +50,30 @@ def start_game():
 
 def waiting_for_players():
     curr_num_players = len(players)
-    setup_data = {"ready": 'False',
-                  'num_players': curr_num_players}
-    print(flask.json.dumps(setup_data))
+    setup_data = {'num_players': curr_num_players}
+
+    # The first time this is called, we need to respond correctly
+    if curr_num_players == 4:
+        setup_data['ready'] = 'True'
+        global game
+        setup_data['player_names'] = [p.name for p in game.players]
+    else:
+        setup_data['ready'] = 'False'
     yield "data: {}\n\n".format(flask.json.dumps(setup_data))
-    while len(players) < 4:
-        # If the number of players changes, yield it
+
+    # As this continues to be looping, we need to update our responses with changes
+    while len(players) <= 4:
+        print("WAITING FOR PLAYERS")
+        # Update to the right number of players
         if len(players) != curr_num_players:
             curr_num_players = len(players)
             setup_data['num_players'] = curr_num_players
+
             if curr_num_players == 4:
                 start_game()
-                global game
                 setup_data["ready"] = 'True'
                 setup_data['player_names'] = [p.name for p in game.players]
-            print(flask.json.dumps(setup_data))
+
             yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 
 
