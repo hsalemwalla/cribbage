@@ -78,7 +78,8 @@ def waiting_for_players():
                 setup_data["ready"] = 'True'
                 setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
                 yield "data: {}\n\n".format(flask.json.dumps(setup_data))
-    except:
+    except GeneratorExit:
+        print("client closed stream")
         return "data: client closed connection\n\n"
 
 
@@ -106,10 +107,12 @@ def get_cards_for_player(name):
 
 @app.route('/pointing')
 def pointing():
+    print("Client called pointing")
     def checking_for_pointed_cards():
         global game
         cur_count = copy.deepcopy(game.count)
         while game.phase == 'pointing':
+            print(game.phase)
             if game.count != cur_count:
                 game_data = {'new_count': game.count}
                 cur_count = copy.deepcopy(game.count)

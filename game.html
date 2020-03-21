@@ -14,11 +14,8 @@
 
    </head>
    <body>
-      <!--<div id="loading" v-if:notready>-->
-         <!--Loading...-->
-      <!--</div>-->
       <div id="game">
-         <h1> Cribbage - {{ playerName }} - {{ myTeam }} </h1>
+         <h1> Cribbage - {{ playerName }} - {{ team }} </h1>
          <hr>
          <div id=scoreboard">
             <b>Team 1:</b> {{ team1Points }} <br>
@@ -30,9 +27,11 @@
             <tr>
                <td width="150px"><b>Drawn card:</b> <br>{{ drawnCard }}</td>
                <td></td>
-               <td>
-                  <b>{{ teams[myTeam][1].name }}</b><br>
-                  {{ teams[myTeam][1].playedCards }}
+               <td class="player">
+                  <div v-if="players.length == 4">
+                     <b>{{ players[2].name }}</b><br>
+                  </div>
+                  <!--{{ teams[myTeam][1].playedCards }}-->
 
                </td>
                <td></td>
@@ -40,23 +39,29 @@
             </tr>
             <tr>
                <td></td>
-               <td>
-                  <b>{{ teams[otherTeam][0].name }}</b> <br>
-                  {{ teams[otherTeam][0].playedCards }} <br>
+               <td class="player">
+                  <div v-if="players.length == 4">
+                     <b>{{ players[1].name }}</b><br>
+                  </div>
+                  <!--{{ teams[otherTeam][0].playedCards }} <br>-->
 
                </td>
                <td></td>
-               <td>
-                  <b>{{ teams[otherTeam][1].name }}</b><br>
-                  {{ teams[otherTeam][1].playedCards }}
+               <td class="player">
+                  <div v-if="players.length == 4">
+                     <b>{{ players[3].name }}</b><br>
+                  </div>
+                  <!--{{ teams[otherTeam][1].playedCards }}-->
                </td>
             </tr>
             <tr>
                <td></td>
                <td></td>
-               <td>
-                  <b>{{ teams[myTeam][0].name }}</b><br>
-                  {{ teams[myTeam][0].playedCards }}
+               <td class="player">
+                  <div v-if="players.length == 4">
+                     <b>{{ players[0].name }}</b><br>
+                  </div>
+                  <!--{{ teams[myTeam][0].playedCards }}-->
                </td>
                <td></td>
             </tr>
@@ -67,12 +72,12 @@
          <table id="myCardsTable" class="myCards" >
             <tr>
                <td class="card" v-for="card in myCards">
-                  {{ card }}
+                  <button v-on:click="playCard"> {{ card }} </button>
                </td>
             </tr>
          </table>
+      </div>
 
-         <!--<button v-on:click="waitForPlayers">Start Game</button>-->
 
    </body>
 </html>
