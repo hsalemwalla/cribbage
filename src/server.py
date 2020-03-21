@@ -2,6 +2,7 @@ from cribbage import Player, Team, Game
 import copy
 from flask import Flask, jsonify, Response
 from flask_cors import CORS
+import flask
 
 app = Flask(__name__)
 CORS(app)
@@ -48,9 +49,10 @@ def start_game():
 
 def waiting_for_players():
     curr_num_players = len(players)
-    setup_data = {'ready': 'False',
+    setup_data = {"ready": 'False',
                   'num_players': curr_num_players}
-    yield "data: {}\n\n".format(setup_data)
+    print(flask.json.dumps(setup_data))
+    yield "data: {}\n\n".format(flask.json.dumps(setup_data))
     while len(players) < 4:
         # If the number of players changes, yield it
         if len(players) != curr_num_players:
@@ -59,9 +61,10 @@ def waiting_for_players():
             if curr_num_players == 4:
                 start_game()
                 global game
-                setup_data['ready'] = 'True'
+                setup_data["ready"] = 'True'
                 setup_data['player_names'] = [p.name for p in game.players]
-            yield "data: {}\n\n".format(jsonify(setup_data))
+            print(flask.json.dumps(setup_data))
+            yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 
 
 @app.route('/gameReady')
@@ -95,7 +98,8 @@ def pointing():
             if game.count != cur_count:
                 game_data = {'new_count': game.count}
                 cur_count = copy.deepcopy(game.count)
-                yield "data: {}\n\n".format(jsonify(game_data))
+                print(flask.json.dumps(setup_data))
+                yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
         return 'data: Pointing Phase Done\n\n'
 
