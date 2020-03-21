@@ -9,7 +9,8 @@ var app = new Vue({
   methods: {
     startGame: function() {
       console.log("Setting ready to true");
-      this.ready = true;
+      window.location.href = 'game.html'
+
     }
   }
 });

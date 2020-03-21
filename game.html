@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>Online Cribbage</title>
+      <script src="https://unpkg.com/vue/dist/vue.js"></script>
+      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+      <!--<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>-->
+
+      <script defer src="./js/game.js"></script>
+      <link rel="stylesheet" type="text/css" href="./css/game.css">
+
+
+   </head>
+   <body>
+      <div id="game">
+         <h1> Cribbage - {{ playerName }} - {{ myTeam }} </h1>
+         <hr>
+         <div id=scoreboard">
+            <b>Team 1:</b> {{ team1Points }} <br>
+            <b>Team 2:</b> {{ team2Points }} <br>
+         </div>
+         <hr>
+
+         <table width="80%" height="100px">
+            <tr>
+               <td width="150px"><b>Drawn card:</b> <br>{{ drawnCard }}</td>
+               <td></td>
+               <td>
+                  <b>{{ teams[myTeam][1].name }}</b><br>
+                  {{ teams[myTeam][1].playedCards }}
+
+               </td>
+               <td></td>
+               <td><b>Point count:</b> <br> {{ pointCount }}</td>
+            </tr>
+            <tr>
+               <td></td>
+               <td>
+                  <b>{{ teams[otherTeam][0].name }}</b> <br>
+                  {{ teams[otherTeam][0].playedCards }} <br>
+
+               </td>
+               <td></td>
+               <td>
+                  <b>{{ teams[otherTeam][1].name }}</b><br>
+                  {{ teams[otherTeam][1].playedCards }}
+               </td>
+            </tr>
+            <tr>
+               <td></td>
+               <td></td>
+               <td>
+                  <b>{{ teams[myTeam][0].name }}</b><br>
+                  {{ teams[myTeam][0].playedCards }}
+               </td>
+               <td></td>
+            </tr>
+         </table>
+
+         <br>
+         <hr>
+         <table class="myCards">
+            <tr>
+               <td class="card" v-for="card in me.cards">
+                  {{ card }}
+               </td>
+            </tr>
+         </table>
+
+         <button v-on:click="waitForPlayers">Start Game</button>
+
+   </body>
+</html>
