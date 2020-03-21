@@ -61,19 +61,20 @@ def waiting_for_players():
         setup_data['ready'] = 'False'
     yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 
-    # As this continues to be looping, we need to update our responses with changes
-    while len(players) <= 4:
-        print("WAITING FOR PLAYERS")
-        # Update to the right number of players
-        if len(players) != curr_num_players:
-            curr_num_players = len(players)
-            setup_data['num_players'] = curr_num_players
+    if curr_num_players < 4:
+        # As this continues to be looping, we need to update our responses with changes
+        while len(players) < 4:
+            print("WAITING FOR PLAYERS")
+            # Update to the right number of players
+            if len(players) != curr_num_players:
+                curr_num_players = len(players)
+                setup_data['num_players'] = curr_num_players
+                yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 
-            if curr_num_players == 4:
-                start_game()
-                setup_data["ready"] = 'True'
-                setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
-
+        if curr_num_players == 4:
+            start_game()
+            setup_data["ready"] = 'True'
+            setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
             yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 
 
