@@ -16,12 +16,12 @@ game = None
 # game.deal()
 
 
-@app.route('/getCardsForPlayer/<player>')
-def get_cards_for_player(player):
-    return game.get_player_hand(player)
+@app.route('/getCardsForPlayer/<name>')
+def get_cards_for_player(name):
+    return game.get_player_hand(name)
 
 
-@app.route('/getCardsForPlayer/<team>/<name>')
+@app.route('/addPlayer/<team>/<name>')
 def add_player(team, name):
     # Add player to player list
     player = Player(name)
@@ -41,11 +41,18 @@ def start_game():
     global teams
 
     if len(players) == 4:
-        game = Game(teams)
+        game = Game(list(teams.values()))
         game.deal()
 
 
 @app.route('/gameReady')
 def game_ready():
     global game
-    return game is not None
+    return str(game is not None)
+
+
+@app.route('/playCard/<player_name>/<card>')
+def play_card(player_name, card):
+    card_symbol, card_suit = card.split(' ')
+    global game
+    game.play_card(player_name, card_suit, card_symbol)
