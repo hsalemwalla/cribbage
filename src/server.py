@@ -56,7 +56,7 @@ def waiting_for_players():
     if curr_num_players == 4:
         setup_data['ready'] = 'True'
         global game
-        setup_data['player_names'] = [p.name for p in game.players]
+        setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
     else:
         setup_data['ready'] = 'False'
     yield "data: {}\n\n".format(flask.json.dumps(setup_data))
