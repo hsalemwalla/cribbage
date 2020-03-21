@@ -66,15 +66,16 @@ class Game:
 
 
 class Team:
-    def __init__(self, players):
-        self.players = players
-        self.num_players = len(players)
-
+    def __init__(self):
+        self.players = []
         self.points = 0
 
     def __str__(self):
         player_names = [p.name for p in self.players]
         return ', '.join(player_names)
+
+    def add_player(self, player):
+        self.players.append(player)
 
 
 class Player:
