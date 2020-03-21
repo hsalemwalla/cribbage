@@ -1,4 +1,6 @@
 from cribbage import Player, Team, Game
+import copy
+import json
 from flask import Flask
 from flask import Response
 from flask_cors import CORS
@@ -17,9 +19,9 @@ game = None
 # game.deal()
 
 
-@app.route('/getCardsForPlayer/<name>')
-def get_cards_for_player(name):
-    return game.get_player_hand(name)
+# *****************************************************************************
+# Starting Game
+# *****************************************************************************
 
 
 @app.route('/addPlayer/<team>/<name>')
@@ -34,8 +36,7 @@ def add_player(team, name):
     global teams
     teams[team].add_player(player)
 
-    start_game()
-    return ""
+    return "OK"
 
 
 def start_game():
@@ -46,6 +47,7 @@ def start_game():
         game = Game(list(teams.values()))
         game.deal()
 
+
 def waiting_for_players():
     currNumPlayers = len(players)
     yield "data: %s\n\n" % currNumPlayers
@@ -54,19 +56,48 @@ def waiting_for_players():
         if len(players) != currNumPlayers:
             currNumPlayers = len(players)
             yield "data: %s\n\n" % currNumPlayers
+    start_game()
+    global game
     yield "data: %s\n\n" % "Game is ready"
+
+{'Jillian': ['Jillian', 'Hussein', 'Mustafa', 'Farhat'],
+ 'Hussein': ['Hussein', ]}
 
 
 @app.route('/gameReady')
 def game_ready():
-    global game
-    # return str(game is not None)
     return Response(waiting_for_players(),
-                          mimetype="text/event-stream")
+                    mimetype="text/event-stream")
 
 
+# *****************************************************************************
+# Game Play
+# *****************************************************************************
 @app.route('/playCard/<player_name>/<card>')
 def play_card(player_name, card):
     card_symbol, card_suit = card.split(' ')
     global game
     game.play_card(player_name, card_suit, card_symbol)
+
+    return "OK"
+
+
+@app.route('/getCardsForPlayer/<name>')
+def get_cards_for_player(name):
+    return game.get_player_hand(name)
+
+@app.route('/pointing')
+def pointing():
+    def checking_for_pointed_cards():
+        global game
+        cur_count = copy.deepcopy(game.count)
+        while game.phase == 'pointing':
+            if game.count != cur_count:
+                game_data = {'new_count': game.count}
+                cur_count = copy.deepcopy(game.count)
+                yield "data: {}\n\n".format(json.dumps(game_data))
+
+        return 'data: Pointing Phase Done\n\n'
+
+    return Response(checking_for_pointed_cards(),
+                    mimetype="text/event-stream")

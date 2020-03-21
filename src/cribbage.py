@@ -16,6 +16,7 @@ class Game:
         self.deck = Deck()
         self.card_flipped = None
         self.deal()
+        self.phase = 'pointing'
         self.count = 0
 
     def new_round(self):
@@ -37,10 +38,11 @@ class Game:
 
     def play_card(self, player_name, card_suit, card_symbol):
         name2player_map = {p.name: p for p in self.players}
+        player = name2player_map[player_name]
 
         # Verify the Card
         def verify_card():
-            for c in player.hand():
+            for c in player.hand:
                 # Verify card in hand
                 card_in_hand = (c.suit == card_suit) & (c.symbol == card_symbol)
                 # Verify card not in pointed
@@ -86,7 +88,7 @@ class Player:
 
 class Deck:
     def __init__(self):
-        symbols = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K']
+        symbols = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
         suits = ['spades', 'hearts', 'clubs', 'diamonds']
 
         self.deck = [Card(suit, symb) for symb in symbols for suit in suits]
@@ -114,7 +116,9 @@ class Card:
         self.suit = suit
         self.symbol = symbol
 
-        symbol_value_map = {'A': 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, 'J': 10, 'Q': 10, 'K': 10}
+        symbol_value_map = {'A': 1, '2': 2, '3': 3, '4': 4, '5': 5,
+                            '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
+                            'J': 10, 'Q': 10, 'K': 10}
         self.value = symbol_value_map[symbol]
 
     def __str__(self):
