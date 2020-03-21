@@ -49,19 +49,21 @@ def start_game():
 
 
 def waiting_for_players():
-    currNumPlayers = len(players)
-    yield "data: %s\n\n" % currNumPlayers
+    curr_num_players = len(players)
+    setup_data = {'ready': 'False',
+                  'num_players': curr_num_players}
+    yield "data: {}\n\n".format(setup_data)
     while len(players) < 4:
         # If the number of players changes, yield it
-        if len(players) != currNumPlayers:
-            currNumPlayers = len(players)
-            yield "data: %s\n\n" % currNumPlayers
-    start_game()
-    global game
-    yield "data: %s\n\n" % "Game is ready"
-
-{'Jillian': ['Jillian', 'Hussein', 'Mustafa', 'Farhat'],
- 'Hussein': ['Hussein', ]}
+        if len(players) != curr_num_players:
+            curr_num_players = len(players)
+            setup_data['num_players'] = curr_num_players
+            if curr_num_players == 4:
+                start_game()
+                global game
+                setup_data['ready'] = 'True'
+                setup_data['player_names'] = [p.name for p in game.players]
+            yield "data: {}\n\n".format(setup_data)
 
 
 @app.route('/gameReady')
