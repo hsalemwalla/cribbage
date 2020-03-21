@@ -27,7 +27,7 @@ game = None
 @app.route('/addPlayer/<team>/<name>')
 def add_player(team, name):
     # Add player to player list
-    player = Player(name)
+    player = Player(name, team)
     global players
     players.append(player)
 
@@ -72,7 +72,7 @@ def waiting_for_players():
             if curr_num_players == 4:
                 start_game()
                 setup_data["ready"] = 'True'
-                setup_data['player_names'] = [p.name for p in game.players]
+                setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
 
             yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 

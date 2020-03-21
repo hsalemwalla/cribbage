@@ -78,9 +78,9 @@ class Team:
 
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, team):
         self.name = name
-
+        self.team = team
         self.hand = []
         self.pointed = []
         self.crib = []
