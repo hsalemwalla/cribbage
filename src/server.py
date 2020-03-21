@@ -1,8 +1,6 @@
 from cribbage import Player, Team, Game
 import copy
-import json
-from flask import Flask
-from flask import Response
+from flask import Flask, jsonify, Response
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -63,7 +61,7 @@ def waiting_for_players():
                 global game
                 setup_data['ready'] = 'True'
                 setup_data['player_names'] = [p.name for p in game.players]
-            yield "data: {}\n\n".format(json.dumps(setup_data))
+            yield "data: {}\n\n".format(jsonify(setup_data))
 
 
 @app.route('/gameReady')
@@ -97,7 +95,7 @@ def pointing():
             if game.count != cur_count:
                 game_data = {'new_count': game.count}
                 cur_count = copy.deepcopy(game.count)
-                yield "data: {}\n\n".format(json.dumps(game_data))
+                yield "data: {}\n\n".format(jsonify(game_data))
 
         return 'data: Pointing Phase Done\n\n'
 
