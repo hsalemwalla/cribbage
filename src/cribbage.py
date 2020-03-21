@@ -16,35 +16,7 @@ class Game:
         self.deck = Deck()
         self.card_flipped = None
         self.deal()
-
-    def validate_game(self):
-        """
-        Check to make sure the game has been setup correctly
-        :return:
-        """
-        # Acceptable combinations
-        [1, 1]
-        [2, 2]
-
-        # Check that there 2 or more players
-        if self.num_players < 2:
-            raise Exception('Too few players')
-
-        # Check that there are 6 or fewer players
-        if self.num_players > 6:
-            raise Exception('Too many players')
-
-        # Check that there are 2 or more teams
-        if self.num_teams < 2:
-            raise Exception('Too few teams')
-
-        # Check that there are 3 or fewer teams
-        if self.num_teams > 3:
-            raise Exception('Too many teams')
-
-        # Check that there are 3 or fewer teams
-        if self.num_teams > 3:
-            raise Exception('Too many teams')
+        self.count = 0
 
     def new_round(self):
         pass
@@ -62,6 +34,32 @@ class Game:
         hand = player_hands[player_name]
         hand_json = json.dumps([str(c) for c in hand])
         return hand_json
+
+    def play_card(self, player_name, card_suit, card_symbol):
+        name2player_map = {p.name: p for p in self.players}
+
+        # Verify the Card
+        def verify_card():
+            for c in player.hand():
+                # Verify card in hand
+                card_in_hand = (c.suit == card_suit) & (c.symbol == card_symbol)
+                # Verify card not in pointed
+                card_not_pointed = c not in player.pointed
+                # Verify card count <= 31
+                under_31 = (c.value + self.count) <= 31
+
+                if card_in_hand & card_not_pointed & under_31:
+                    return c
+        card = verify_card()
+        if card is None:
+            return "NOT A GOOD CARD"
+
+        # Move the card into the player's pointed list
+        player = name2player_map[player_name]
+        player.pointed.append(card)
+
+        # Add card to the points
+        self.count += card.value
 
 
 class Team:

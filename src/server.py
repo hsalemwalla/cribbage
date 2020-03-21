@@ -17,9 +17,9 @@ game = None
 # game.deal()
 
 
-@app.route('/getCardsForPlayer/<player>')
-def get_cards_for_player(player):
-    return game.get_player_hand(player)
+@app.route('/getCardsForPlayer/<name>')
+def get_cards_for_player(name):
+    return game.get_player_hand(name)
 
 
 @app.route('/addPlayer/<team>/<name>')
@@ -63,3 +63,10 @@ def game_ready():
     # return str(game is not None)
     return Response(waiting_for_players(),
                           mimetype="text/event-stream")
+
+
+@app.route('/playCard/<player_name>/<card>')
+def play_card(player_name, card):
+    card_symbol, card_suit = card.split(' ')
+    global game
+    game.play_card(player_name, card_suit, card_symbol)
