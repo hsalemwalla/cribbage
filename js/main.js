@@ -8,8 +8,9 @@ var app = new Vue({
   },
   methods: {
     startGame: function() {
-      console.log("Setting ready to true");
-      window.location.href = 'game.html'
+      axios .get('http://localhost:5000/addPlayer/'+this.team+'/'+this.playerName)
+      var url = 'game.html?name=' + this.playerName
+      window.location.href = url
 
     }
   }

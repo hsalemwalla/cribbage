@@ -14,6 +14,9 @@
 
    </head>
    <body>
+      <!--<div id="loading" v-if:notready>-->
+         <!--Loading...-->
+      <!--</div>-->
       <div id="game">
          <h1> Cribbage - {{ playerName }} - {{ myTeam }} </h1>
          <hr>
@@ -61,15 +64,15 @@
 
          <br>
          <hr>
-         <table class="myCards">
+         <table id="myCardsTable" class="myCards" >
             <tr>
-               <td class="card" v-for="card in me.cards">
+               <td class="card" v-for="card in myCards">
                   {{ card }}
                </td>
             </tr>
          </table>
 
-         <button v-on:click="waitForPlayers">Start Game</button>
+         <!--<button v-on:click="waitForPlayers">Start Game</button>-->
 
    </body>
 </html>

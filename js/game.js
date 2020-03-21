@@ -1,3 +1,16 @@
+function getParameterByName(name, url) {
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, '\\$&');
+  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+var myName = getParameterByName('name'); // "lorem"
+
+
 function Team(player1, player2) {
   jj
   this.player1 = player1;
@@ -6,8 +19,6 @@ function Team(player1, player2) {
 function Player()  {
   this.name = ""
   this.team = ""
-  this.cards = ["4 clubs", "9 hearts", "8 diamods", "ace spades"]
-  this.crib = []
   this.dealer = false
   this.playedCards = "7 of clubs"
 }
@@ -20,7 +31,7 @@ opp2 = new Player();
 team1 = [myPlayer, partner]
 team2 = [opp1, opp2]
 
-myPlayer.name = "Hussein"
+myPlayer.name = myName
 myPlayer.team = "team1"
 
 partner.name = "Jillian"
@@ -36,16 +47,22 @@ opp2.team = "team2"
 var BASE_URL = "http://localhost:5000/waitForPlayers";
 var app = new Vue({
   el: '#game',
-  data: {
+  data() {
     // Passed in from previous page
-    playerName: "Hussein",
-    myTeam: "team1",
-    otherTeam: "team2",
-    info: null,
-    team1Points: 0,
-    team2Points: 0,
-    drawnCard: "7 of clubs",
-    pointCount: 0
+    return {
+      playerName: myName,
+      myTeam: "team1",
+      otherTeam: "team2",
+      info: null,
+      team1Points: 0,
+      team2Points: 0,
+      drawnCard: "7 of clubs",
+      pointCount: 0,
+      componentKey: 0,
+      myCards: [],
+      crib: [],
+      ready: false
+    }
   },
   computed: {
     me() { 
@@ -59,11 +76,28 @@ var app = new Vue({
   },
   methods: {
     waitForPlayers() {
-      console.log(this.me)
-      //axios
-        //.get('https://api.coindesk.com/v1/bpi/currentprice.json')
-        //.then(response => (this.info = response))
-      console.log("Waiting for data");
+      console.log("Getting my cards");
     }
   }
 });
+
+// Wait for all the players
+// We will receive a "Game is ready" in the data when the 
+// backend has seen all the players have joined
+gameReadyEvSrc = new EventSource("http://localhost:5000/gameReady")
+gameReadyEvSrc.onmessage = function(e) {
+  console.log(e)
+  if (e.data === "Game is ready") {
+    app.ready = true;
+    gameReadyEvSrc.close()
+  }
+}
+//axios
+  //.get('http://localhost:5000/gameReady')
+  //.then(response => (app.ready = (response.data === 'True')))
+//}
+
+// The game is ready get my cards
+//axios
+  //.get('http://localhost:5000/getCardsForPlayer/'+myName)
+  //.then(response => (app.myCards = response.data))

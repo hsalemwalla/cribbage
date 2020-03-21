@@ -12,7 +12,6 @@ class Game:
 
         self.players = [teams[0].players[0], teams[1].players[0],
                         teams[0].players[1], teams[1].players[1]]
-        self.num_players = sum([t.num_players for t in teams])
 
         self.deck = Deck()
         self.card_flipped = None
