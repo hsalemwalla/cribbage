@@ -26,8 +26,11 @@ class Game:
         self.players = [teams['team1'].players[0], teams['team2'].players[0],
                         teams['team1'].players[1], teams['team2'].players[1]]
         self.who_passed = {p.name: False for p in self.players}
-        self.dealer = self.players[0]
-        self.turn = self.players[1]
+
+        # Choose dealer & first to play
+        dealer_index = random.randint(0, 3)
+        self.dealer = self.players[dealer_index]
+        self.turn = self.players[(dealer_index + 1) % 4]
 
         self.phase = 'pointing'
         self.count = 0
@@ -54,7 +57,6 @@ class Game:
 
         def verify_pass():
             # Verify players turn
-            is_player_turn = self.turn.name == player_name
             cards_not_played = [c for c in player.hand if c not in player.pointed]
             # Check that all the not played cards are illegal
             for c in cards_not_played:
@@ -211,12 +213,3 @@ class Card:
 
     def __str__(self):
         return '{} {}'.format(self.symbol, self.suit)
-
-
-# def player_cards():
-#     """
-#     Given a player's name, return a json object with the cards currently in the players hand.
-#     :return:
-#     """
-#
-#     for game.team

@@ -128,6 +128,7 @@ def pointing():
         global game
 
         game_data = {'new_count': game.count,
+                     'dealer': game.dealer,
                      'player_turn': game.turn.name,
                      'round_play': game.round_play,
                      'next_round_avail': False,
@@ -137,6 +138,7 @@ def pointing():
             pass
 
         game_data = {'new_count': game.count,
+                     'dealer': game.dealer,
                      'player_turn': game.turn.name,
                      'round_play': game.round_play,
                      'next_round_avail': all(game.who_passed.values()) or game.count == 31,
@@ -147,6 +149,7 @@ def pointing():
         while game.phase == 'pointing':
             if game.trigger_next_turn != curr_trigger:
                 game_data = {'new_count': game.count,
+                             'dealer': game.dealer,
                              'player_turn': game.turn.name,
                              'round_play': game.round_play,
                              'next_round_avail': all(game.who_passed.values()) or game.count == 31,
