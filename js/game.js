@@ -146,10 +146,6 @@ var app = new Vue({
       
       var self = this
       axios.get('http://'+ ip + '/newHand')
-      .then(function(response) {
-        getMyCards()
-
-      })
     }
   }
 });
@@ -298,6 +294,7 @@ function counting() {
     app.allDone = data.all_done_counting
     if (data.reset) {
       countingEvSrc.close()
+      getMyCards()
     }
   }
   console.log("Starting counting phase")
