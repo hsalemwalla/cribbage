@@ -53,7 +53,16 @@ var app = new Vue({
         console.assert(cribCard != null, "cribCard is null")
         axios.get('http://'+ ip + ':5000/addToCrib/'+myName+'/'+e.target.innerText)
         .then(getMyCards)
-      } else {
+      } else if (this.phase === 'pointing') {
+        // Go through my cards, find the card, and kill it
+        var cardToPlay = null
+        for (var i = 0; i < this.myCards.length; i++) {
+          if (this.myCards[i] === e.target.innerText) {
+            // Get rid of one card
+            cardToPlay = this.myCards.splice(i,1)
+          }
+        }
+        console.assert(cardToPlay != null, "playing card is null")
         console.log(e.target.innerText);
         axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
       }
@@ -73,8 +82,10 @@ function pointing() {
     console.log(e)
     // The new count after the person played
     app.pointCount = data.new_count
+    app.drawnCard = data.card_flipped
     // Is it my turn? 
     app.myTurn = (data.player_turn === myName)
+    
   }
 }
 
@@ -84,7 +95,12 @@ function getMyCards() {
     .get('http://' + ip + ':5000/getCardsForPlayer/'+myName)
     .then(function(response) {
       app.myCards = response.data
-      app.phase = 'select_crib'
+      if (app.phase === 'select_crib') {
+        app.phase = 'pointing'
+        pointing()
+      } else if (app.phase === 'init') {
+        app.phase = 'select_crib'
+      }
     })
 }
 

@@ -46,7 +46,11 @@
                   <!--{{ teams[otherTeam][0].playedCards }} <br>-->
 
                </td>
-               <td></td>
+               <td>
+                  <div v-if="myTurn">
+                     It's your turn!
+                  </div>
+               </td>
                <td class="player">
                   <div v-if="players.length == 4">
                      <b>{{ players[3].name }}</b><br>

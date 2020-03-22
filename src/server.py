@@ -109,6 +109,7 @@ def add_to_crib(player_name, card):
     card_symbol, card_suit = card.split(' ')
     global game
     game.add_to_crib(player_name, card_suit, card_symbol)
+    print([str(c) for c in game.dealer.crib])
 
     return "OK"
 
