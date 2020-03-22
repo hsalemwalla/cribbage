@@ -47,11 +47,30 @@ class Game:
 
         self.card_flipped = dealing_deck.pop()
 
+    def next_turn(self, player_name):
+        all_player_names = [p.name for p in self.players]
+        next_player_index = (all_player_names.index(player_name) + 1) % 4
+        self.turn = self.players[next_player_index]
+        self.who_passed[player_name] = True
+        self.trigger_next_turn += 1
+
+    def get_all_cards(self):
+        cards = {}
+        for p in self.players:
+            cards[p.name] = [str(c) for c in p.hand]
+        cards['crib'] = [str(c) for c in self.dealer.crib]
+        return cards
+
     def get_player_hand(self, player_name):
-        player_hands = {p.name: p.hand for p in self.players}
-        hand = player_hands[player_name]
-        hand_json = json.dumps([str(c) for c in hand])
-        return hand_json
+        if player_name == 'crib':
+            crib = self.dealer.crib
+            crib_json = json.dumps([str(c) for c in crib])
+            return crib_json
+        else:
+            player_hands = {p.name: p.hand for p in self.players}
+            hand = player_hands[player_name]
+            hand_json = json.dumps([str(c) for c in hand])
+            return hand_json
 
     def pass_turn(self, player_name):
         name2player_map = {p.name: p for p in self.players}
@@ -145,12 +164,12 @@ class Game:
 
         # Update whose turn it is, one after dealer
         dealer_index = 0
-        for p,idx in enumerate(self.players):
+        for idx, p in enumerate(self.players):
             if p == self.dealer:
                 dealer_index = idx
 
         all_player_names = [p.name for p in self.players]
-        next_player_index = (all_player_names.index(dealer_index) + 1) % 4
+        next_player_index = (dealer_index + 1) % 4
         self.turn = self.players[next_player_index]
 
         # Change phase to counting
@@ -159,7 +178,7 @@ class Game:
     def get_total_num_cards_played(self):
         num_cards = 0
         for p in self.players:
-            numCards = numCards + p.get_num_cards_played()
+            num_cards = num_cards + p.get_num_cards_played()
         return num_cards
 
     def next_round(self):

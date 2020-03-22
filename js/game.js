@@ -229,11 +229,51 @@ function pointing() {
 }
 
 function counting() {
-  //pointingEvSrc = new EventSource("http://" + ip + ":5000/pointing")
-  //pointingEvSrc.onerror = function(e) {
-    //console.log(e)
-  //}
-  //pointingEvSrc.onmessage = function(e) {
+  pointingEvSrc = new EventSource("http://" + ip + ":5000/counting")
+  pointingEvSrc.onerror = function(e) {
+    console.log(e)
+  }
+  pointingEvSrc.onmessage = function(e) {
+    console.log(e)
+    var data = JSON.parse(e.data)
+
+    if (data.phase === 'counting') {
+      // The new count after the person played
+      app.drawnCard = data.card_flipped
+
+      // Show all cards
+
+      // Dealer and player turn
+      var player_num_turn = -1;
+      for (var i = 0; i < app.players.length; i++) {
+        // Set the players cards
+        data.all_cards[app.players[i].name].forEach(function(card, idx) {
+          app.players[i].playedCards += card
+          app.players[i].playedCards += "\n"
+        })
+
+        // Whos turn is it
+        app.isPlayerTurn[i] = (app.players[i].name === data.player_turn)
+
+        // Set dealer
+        if (app.players[i].name === data.dealer) {
+          app.players[i].dealer = "Dealer"
+        } else {
+          app.players[i].dealer = ""
+        }
+      }
+
+      // Set the crib
+      app.crib = data.all_cards['crib']
+
+      // Scores
+      app.team1Points = data.scores.team1
+      app.team2Points = data.scores.team2
+      app.team1ScoreTrack = getScoreTrack(app.team1Points)
+      app.team2ScoreTrack = getScoreTrack(app.team2Points)
+    }
+
+  }
   console.log("Starting counting phase")
 }
 

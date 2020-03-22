@@ -93,6 +93,11 @@ def game_ready():
 @app.route('/playCard/<player_name>/<card>')
 def play_card(player_name, card):
     global game
+
+    if game.phase == 'counting':
+        # Just move to the next turn
+        game.next_turn(player_name)
+
     if game.phase != 'pointing':
         return "OK"
 
@@ -196,6 +201,51 @@ def pointing():
 
     return Response(checking_for_pointed_cards(),
                     mimetype="text/event-stream")
+    
+@app.route('/counting')
+def counting():
+    print("Client called counting")
+
+    def counting_phase():
+        global game
+
+        try:
+            # Inital ready game state
+            game_data = {'dealer': game.dealer.name,
+                         'phase': game.phase,
+                         'all_cards': game.get_all_cards(),
+                         'player_turn': game.turn.name,
+                         'scores': game.scores,
+                         'card_flipped': str(game.card_flipped)}
+            yield "data: {}\n\n".format(flask.json.dumps(game_data))
+
+            # Main pointing phase loop
+            curr_trigger = copy.deepcopy(game.trigger_next_turn)
+            while game.phase == 'counting':
+                if game.trigger_next_turn != curr_trigger:
+                    game_data = {'dealer': game.dealer.name,
+                                 'phase': game.phase,
+                                 'player_turn': game.turn.name,
+                                 'all_cards': game.get_all_cards(),
+                                 'scores': game.scores,
+                                 'card_flipped': str(game.card_flipped)}
+                    curr_trigger = copy.deepcopy(game.trigger_next_turn)
+                    yield "data: {}\n\n".format(flask.json.dumps(game_data))
+
+            game_data = {'dealer': "",
+                         'phase': game.phase,
+                         'player_turn': "",
+                         'all_cards': game.get_all_cards(),
+                         'scores': game.scores,
+                         'card_flipped': ""}
+            yield "data: {}\n\n".format(flask.json.dumps(game_data))
+        except GeneratorExit:
+            print("Client closed counting phase")
+            return "data: counting done, client closed\n\n"
+
+        return 'data: Pointing Phase Done\n\n'
+
+    return Response(counting_phase(), mimetype="text/event-stream")
 
 
 @app.route('/nextRound')
@@ -206,6 +256,7 @@ def next_round():
 @app.route('/score/<team>/<score>')
 def update_score(team,score):
     game.scores[team] = score
+    game.trigger_next_turn += 1
     return "OK"
 
 

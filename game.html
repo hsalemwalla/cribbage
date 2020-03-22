@@ -79,7 +79,11 @@
                </td>
             </tr>
             <tr>
-               <td></td>
+               <td>
+                  <div>
+                     {{ crib }}
+                  </div>
+               </td>
                <td></td>
                <td v-bind:class="[{activePlayer: isPlayerTurn[0]}]" class="player">
                   <div v-if="players.length == 4">
