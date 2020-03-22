@@ -22,10 +22,10 @@ function Player()  {
 
 function getCardValue(card) {
   var value = card.split(' ')[0]
-  if (value === 'ace') { return 10 }
-  else if (value === 'jack') { return 10 }
-  else if (value === 'queen') { return 10 }
-  else if (value === 'king') { return 10 }
+  if (value === 'A') { return 10 }
+  else if (value === 'J') { return 10 }
+  else if (value === 'Q') { return 10 }
+  else if (value === 'K') { return 10 }
   else { return parseInt(value) }
 }
 
