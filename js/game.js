@@ -135,7 +135,9 @@ var app = new Vue({
           }
         }
       } else if (this.phase === 'counting') {
-        axios.get('http://'+ ip + ':5000/playCard/'+myName+'/cribNextTurn')
+        if (e.target.innerText === "Next Round") {
+          axios.get('http://'+ ip + ':5000/playCard/'+myName+'/cribNextTurn')
+        }
       }
     }
   }
