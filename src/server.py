@@ -94,8 +94,10 @@ def game_ready():
 def play_card(player_name, card):
     global game
     if card == "Pass":
+        print(player_name + " attempting to pass")
         game.pass_turn(player_name)
     else: 
+        print(player_name + " attempting to play: " + card)
         card_symbol, card_suit = card.split(' ')
         game.play_card(player_name, card_suit, card_symbol)
 
@@ -130,8 +132,9 @@ def pointing():
         yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
         cur_count = copy.deepcopy(game.count)
+        cur_turn = copy.deepcopy(game.turn)
         while game.phase == 'pointing':
-            if game.count != cur_count:
+            if game.turn != cur_turn:
                 game_data = {'new_count': game.count,
                              'player_turn': game.turn.name,
                              'card_flipped': str(game.card_flipped)}
