@@ -222,7 +222,6 @@ function pointing() {
         app.team1ScoreTrack = getScoreTrack(app.team1Points)
         app.team2ScoreTrack = getScoreTrack(app.team2Points)
         pointingEvSrc.close()
-        app.phase = 'counting'
         getMyCards()
 
       }
