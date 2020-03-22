@@ -148,13 +148,13 @@ var app = new Vue({
       .then(function(response) {
         this.phase = 'init'
         // Clean my shit up
-        this.drawnCard = null,
-        this.pointCount = 0,
-        this.myCards = [],
-        this.crib = [],
-        this.myTurn = false,
-        this.nextRoundAvail = false,
-        this.allDone = false,
+        this.drawnCard = null
+        this.pointCount = 0
+        this.myCards = []
+        this.crib = []
+        this.myTurn = false
+        this.nextRoundAvail = false
+        this.allDone = false
         this.isPlayerTurn = [false,false,false,false]
         getMyCards()
 
