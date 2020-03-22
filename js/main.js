@@ -2,16 +2,22 @@ var app = new Vue({
   el: '#main',
   data: {
     title: "Cribbage Online",
-    playerName: "Hussein",
+    playerName: "",
     team: "team1",
-    ready: false
+    ready: false,
+    serverIp: "localhost"
   },
   methods: {
     startGame: function() {
-      axios .get('http://localhost:5000/addPlayer/'+this.team+'/'+this.playerName)
-      var url = 'game.html?name=' + this.playerName
-      window.location.href = url
-
+      this.$nextTick()
+      var addPlayerUrl = "http://" + this.serverIp + ":5000"
+      var self = this
+      axios
+        .get(addPlayerUrl + '/addPlayer/' + this.team + '/' + this.playerName)
+        .then( function () {
+          var url = 'game.html?name=' + self.playerName + '&team=' + self.team + '&ip=' + self.serverIp
+          window.location.href = url
+        })
     }
   }
 });
