@@ -143,8 +143,7 @@ var app = new Vue({
     },
     newHand(e) {
       console.log(e)
-      
-      var self = this
+      this.allDone = false
       axios.get('http://'+ ip + '/newHand')
     }
   }
@@ -310,7 +309,7 @@ function getMyCards() {
   } else if (app.phase === 'pointing') {
     app.phase = 'counting'
   } else if (app.phase === 'counting') {
-    app.phase = 'select-crib'
+    app.phase = 'select_crib'
   }
 
   // Clean up unless we are moving from pointing->counting
