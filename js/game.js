@@ -134,6 +134,8 @@ var app = new Vue({
             axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
           }
         }
+      } else if (this.phase === 'counting') {
+        axios.get('http://'+ ip + ':5000/playCard/'+myName+'/cribNextTurn')
       }
     }
   }
@@ -240,6 +242,8 @@ function counting() {
     if (data.phase === 'counting') {
       // The new count after the person played
       app.drawnCard = data.card_flipped
+      // Show the next round avail button, and hide the pass button
+      app.nextRoundAvail = data.next_round_avail
 
       // Show all cards
 

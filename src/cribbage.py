@@ -174,6 +174,7 @@ class Game:
 
         # Change phase to counting
         self.phase = 'counting'
+        self.trigger_next_turn += 1
 
     def get_total_num_cards_played(self):
         num_cards = 0

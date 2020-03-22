@@ -105,7 +105,7 @@
                </td>
                <td class="card">
                   <div>
-                     <button v-on:click="selectCard"> Pass </button>
+                     <button v-on:click="selectCard" v-if="!nextRoundAvail"> Pass </button>
                   </div>
                </td>
                <td class="card" v-if="nextRoundAvail && myTurn">

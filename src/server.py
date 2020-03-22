@@ -215,6 +215,7 @@ def counting():
                          'phase': game.phase,
                          'all_cards': game.get_all_cards(),
                          'player_turn': game.turn.name,
+                         'next_round_avail': True,
                          'scores': game.scores,
                          'card_flipped': str(game.card_flipped)}
             yield "data: {}\n\n".format(flask.json.dumps(game_data))
@@ -226,6 +227,7 @@ def counting():
                     game_data = {'dealer': game.dealer.name,
                                  'phase': game.phase,
                                  'player_turn': game.turn.name,
+                                 'next_round_avail': True,
                                  'all_cards': game.get_all_cards(),
                                  'scores': game.scores,
                                  'card_flipped': str(game.card_flipped)}
@@ -236,6 +238,7 @@ def counting():
                          'phase': game.phase,
                          'player_turn': "",
                          'all_cards': game.get_all_cards(),
+                         'next_round_avail': False,
                          'scores': game.scores,
                          'card_flipped': ""}
             yield "data: {}\n\n".format(flask.json.dumps(game_data))
