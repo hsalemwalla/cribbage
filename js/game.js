@@ -73,19 +73,19 @@ var app = new Vue({
       switch(e.currentTarget.id) {
         case 'team1ScoreIncrease':
           this.team1Points = parseInt(this.team1Points) + 1
-          axios.get('http://'+ ip + '/score/team1/'+this.team1Points)
+          axios.get('http://'+ ip + ':5000/score/team1/'+this.team1Points)
           break;
         case 'team1ScoreDecrease':
           this.team1Points = parseInt(this.team1Points) - 1
-          axios.get('http://'+ ip + '/score/team1/'+this.team1Points)
+          axios.get('http://'+ ip + ':5000/score/team1/'+this.team1Points)
           break;
         case 'team2ScoreIncrease':
           this.team2Points = parseInt(this.team2Points) + 1
-          axios.get('http://'+ ip + '/score/team2/'+this.team2Points)
+          axios.get('http://'+ ip + ':5000/score/team2/'+this.team2Points)
           break;
         case 'team2ScoreDecrease':
           this.team2Points = parseInt(this.team2Points) - 1
-          axios.get('http://'+ ip + '/score/team2/'+this.team2Points)
+          axios.get('http://'+ ip + ':5000/score/team2/'+this.team2Points)
           break;
       }
     },
@@ -101,17 +101,17 @@ var app = new Vue({
           }
         }
         console.assert(cribCard != null, "cribCard is null")
-        axios.get('http://'+ ip + '/addToCrib/'+myName+'/'+e.target.innerText)
+        axios.get('http://'+ ip + ':5000/addToCrib/'+myName+'/'+e.target.innerText)
         .then(getMyCards)
       } else if (this.phase === 'pointing') {
         if (this.nextRoundAvail) {
           // Only the next round avail button is valid
           if (e.target.innerText === "Next Round") {
-            axios.get('http://'+ ip + '/nextRound')
+            axios.get('http://'+ ip + ':5000/nextRound')
           }
         } else {
           if (e.target.innerText === "Pass") {
-            axios.get('http://'+ ip + '/playCard/'+myName+'/'+e.target.innerText)
+            axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
           } else {
             // Go through my cards, find the card, and kill it
             var cardToPlay = null
@@ -132,18 +132,18 @@ var app = new Vue({
             }
             console.assert(cardToPlay != null, "playing card is null")
             console.log(e.target.innerText);
-            axios.get('http://'+ ip + '/playCard/'+myName+'/'+e.target.innerText)
+            axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
           }
         }
       } else if (this.phase === 'counting') {
         if (e.target.innerText === "Pass") {
-          axios.get('http://'+ ip + '/playCard/'+myName+'/cribNextTurn')
+          axios.get('http://'+ ip + ':5000/playCard/'+myName+'/cribNextTurn')
         }
       }
     },
     newHand(e) {
       console.log(e)
-      axios.get('http://'+ ip + '/newHand')
+      axios.get('http://'+ ip + ':5000/newHand')
       .then(function(response) {
         this.phase = 'init'
         getMyCards()
@@ -160,7 +160,7 @@ var app = new Vue({
 function pointing() {
   // begin event source for pointing
   // Also start accepting card played events
-  pointingEvSrc = new EventSource("http://" + ip + "/pointing")
+  pointingEvSrc = new EventSource("http://" + ip + ":5000/pointing")
   pointingEvSrc.onerror = function(e) {
     console.log(e)
   }
@@ -242,7 +242,7 @@ function pointing() {
 }
 
 function counting() {
-  countingEvSrc = new EventSource("http://" + ip + "/counting")
+  countingEvSrc = new EventSource("http://" + ip + ":5000/counting")
   countingEvSrc.onerror = function(e) {
     console.log(e)
   }
@@ -302,7 +302,7 @@ function counting() {
 
 function getMyCards() {
   axios
-    .get('http://' + ip + '/getCardsForPlayer/'+myName)
+    .get('http://' + ip + ':5000/getCardsForPlayer/'+myName)
     .then(function(response) {
       app.myCards = response.data
       if (app.phase === 'init') {
@@ -320,7 +320,7 @@ function getMyCards() {
 // Wait for all the players
 // We will receive a "Game is ready" in the data when the 
 // backend has seen all the players have joined
-gameReadyEvSrc = new EventSource("http://" + ip + "/gameReady")
+gameReadyEvSrc = new EventSource("http://" + ip + ":5000/gameReady")
 gameReadyEvSrc.onerror = function(e) {
   console.log(e)
 }
