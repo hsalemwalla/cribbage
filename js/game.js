@@ -19,8 +19,6 @@ function Player()  {
 }
 
 
-//var BASE_URL = "http://localhost:5000/waitForPlayers";
-
 var app = new Vue({
   el: '#game',
   data() {
@@ -35,6 +33,7 @@ var app = new Vue({
       pointCount: 0,
       myCards: [],
       crib: [],
+      myTurn: false
     }
   },
   methods: {
@@ -44,6 +43,28 @@ var app = new Vue({
     }
   }
 });
+
+
+function pointing() {
+  // begin event source for pointing
+  // Also start accepting card played events
+  gameReadyEvSrc = new EventSource("http://localhost:5000/pointing")
+  gameReadyEvSrc.onmessage = function(e) {
+    console.log(e)
+    // The new count after the person played
+    app.pointCount = data.new_count
+    // Is it my turn? 
+    app.myTurn = (data.player_turn === myName)
+  }
+}
+
+
+function getMyCards() {
+  axios
+    .get('http://localhost:5000/getCardsForPlayer/'+myName)
+    .then(response => (app.myCards = response.data))
+}
+
 
 // Wait for all the players
 // We will receive a "Game is ready" in the data when the 
@@ -73,9 +94,8 @@ gameReadyEvSrc.onmessage = function(e) {
     })
     gameReadyEvSrc.close()
 
-    axios
-      .get('http://localhost:5000/getCardsForPlayer/'+myName)
-      .then(response => (app.myCards = response.data))
+    getMyCards()
+    pointing()
   }
 }
 
