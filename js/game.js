@@ -77,7 +77,7 @@ function getMyCards() {
 gameReadyEvSrc = new EventSource("http://" + ip + ":5000/gameReady")
 gameReadyEvSrc.onerror = function(e) {
   console.log(e)
-  gameReadyEvSrc.close()
+  //gameReadyEvSrc.close()
 }
 gameReadyEvSrc.onmessage = function(e) {
   console.log(e)
