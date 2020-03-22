@@ -8,6 +8,21 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
+function getScoreTrack(score) {
+  if (score < 0) {
+    return ""
+  }
+  var track = ""
+  for (var i = 0; i < score; i++) {
+    if (i % 5 === 0) {
+      track += "|"
+    }
+    track += "."
+  }
+
+  return track
+}
+
 var myName = getParameterByName('name')
 var myTeam = getParameterByName('team')
 var ip = getParameterByName('ip')
@@ -17,6 +32,7 @@ function Player()  {
   this.team = ""
   this.dealer = false
   this.playedCards = ""
+  this.dealer = ""
 }
 
 
@@ -38,18 +54,41 @@ var app = new Vue({
       team: myTeam,
       players: [],
       team1Points: 0,
+      team1ScoreTrack: "",
       team2Points: 0,
+      team2ScoreTrack: "",
       drawnCard: null,
       pointCount: 0,
       myCards: [],
       crib: [],
       myTurn: false,
       phase: 'init',
-      nextRoundAvail: false
+      nextRoundAvail: false,
+      whosTurn: ""
 
     }
   },
   methods: {
+    updateScore(e) {
+      switch(e.currentTarget.id) {
+        case 'team1ScoreIncrease':
+          this.team1Points += 1
+          axios.get('http://'+ ip + ':5000/score/team1/'+this.team1Points)
+          break;
+        case 'team1ScoreDecrease':
+          this.team1Points -= 1
+          axios.get('http://'+ ip + ':5000/score/team1/'+this.team1Points)
+          break;
+        case 'team2ScoreIncrease':
+          this.team2Points += 1
+          axios.get('http://'+ ip + ':5000/score/team2/'+this.team2Points)
+          break;
+        case 'team2ScoreDecrease':
+          this.team2Points -= 1
+          axios.get('http://'+ ip + ':5000/score/team2/'+this.team2Points)
+          break;
+      }
+    },
     selectCard(e) {
       if (this.phase === 'select_crib') {
         console.assert(this.myCards.length === 5, "myCards is not 5") // We should have 5 cards if we are in this phase
@@ -118,6 +157,21 @@ function pointing() {
     app.nextRoundAvail = data.next_round_avail
     // Is it my turn? 
     app.myTurn = (data.player_turn === myName)
+
+    // Set dealer
+    for (var i = 0; i < app.players.length; i++) {
+      if (app.players[i].name === data.dealer) {
+        app.players[i].dealer = "Dealer"
+      } else {
+        app.players[i].dealer = ""
+      }
+    }
+
+    // scores
+    app.team1Points = data.scores.team1
+    app.team2Points = data.scores.team2
+    app.team1ScoreTrack = getScoreTrack(app.team1Points)
+    app.team2ScoreTrack = getScoreTrack(app.team2Points)
 
     // Go through each player, filter out the array with cards that this player played
     // Then set the players playedCards to the last in the list

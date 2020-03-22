@@ -10,6 +10,8 @@ class Game:
         self.turn = None
         self.dealer = None
 
+        self.scores = {'team1': 0, 'team2': 0}
+
         self.deck = Deck()
         self.card_flipped = None
 

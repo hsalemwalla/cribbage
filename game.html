@@ -11,15 +11,34 @@
       <script defer src="./js/game.js"></script>
       <link rel="stylesheet" type="text/css" href="./css/game.css">
 
-
    </head>
    <body>
       <div id="game">
          <h1> Cribbage - {{ playerName }} - {{ team }} </h1>
          <hr>
          <div id=scoreboard">
-            <b>Team 1:</b> {{ team1Points }} <br>
-            <b>Team 2:</b> {{ team2Points }} <br>
+            <table>
+               <tr>
+                  <td>
+                     <button id="team1ScoreDecrease" v-on:click="updateScore"> - </button>
+                     <button id="team1ScoreIncrease" v-on:click="updateScore"> + </button>
+                     <b>Team 1:</b> {{ team1Points }}
+                   </td>
+                   <td>
+                      {{ team1ScoreTrack }}
+                   </td>
+               </tr>
+               <tr>
+                  <td>
+                     <button id="team2ScoreDecrease" v-on:click="updateScore"> - </button>
+                     <button id="team2ScoreIncrease" v-on:click="updateScore"> + </button>
+                     <b>Team 2:</b> {{ team2Points }}
+                  </td>
+                   <td>
+                      {{ team2ScoreTrack }}
+                   </td>
+               </tr>
+            </table>
          </div>
          <hr>
 
@@ -29,6 +48,7 @@
                <td></td>
                <td class="player">
                   <div v-if="players.length == 4">
+                        {{ players[2].dealer }}<br>
                      <b>{{ players[2].name }}</b><br>
                         {{ players[2].playedCards }} <br>
                   </div>
@@ -40,8 +60,9 @@
                <td></td>
                <td class="player">
                   <div v-if="players.length == 4">
+                        {{ players[1].dealer }}<br>
                      <b>{{ players[1].name }}</b><br>
-                     {{ players[1].playedCards }} <br>
+                        {{ players[1].playedCards }} <br>
                   </div>
                </td>
                <td>
@@ -51,6 +72,7 @@
                </td>
                <td class="player">
                   <div v-if="players.length == 4">
+                        {{ players[3].dealer }}<br>
                      <b>{{ players[3].name }}</b><br>
                         {{ players[3].playedCards }} <br>
                   </div>
@@ -61,6 +83,7 @@
                <td></td>
                <td class="player">
                   <div v-if="players.length == 4">
+                        {{ players[0].dealer }}<br>
                      <b>{{ players[0].name }}</b><br>
                         {{ players[0].playedCards }} <br>
                   </div>

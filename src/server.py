@@ -128,20 +128,22 @@ def pointing():
         global game
 
         game_data = {'new_count': game.count,
-                     'dealer': game.dealer,
+                     'dealer': game.dealer.name,
                      'player_turn': game.turn.name,
                      'round_play': game.round_play,
                      'next_round_avail': False,
+                     'scores': game.scores,
                      'card_flipped': "Waiting for other players"}
         yield "data: {}\n\n".format(flask.json.dumps(game_data))
         while len(game.dealer.crib) < 4:
             pass
 
         game_data = {'new_count': game.count,
-                     'dealer': game.dealer,
+                     'dealer': game.dealer.name,
                      'player_turn': game.turn.name,
                      'round_play': game.round_play,
                      'next_round_avail': all(game.who_passed.values()) or game.count == 31,
+                     'scores': game.scores,
                      'card_flipped': str(game.card_flipped)}
         yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
@@ -149,10 +151,11 @@ def pointing():
         while game.phase == 'pointing':
             if game.trigger_next_turn != curr_trigger:
                 game_data = {'new_count': game.count,
-                             'dealer': game.dealer,
+                             'dealer': game.dealer.name,
                              'player_turn': game.turn.name,
                              'round_play': game.round_play,
                              'next_round_avail': all(game.who_passed.values()) or game.count == 31,
+                             'scores': game.scores,
                              'card_flipped': str(game.card_flipped)}
                 curr_trigger = copy.deepcopy(game.trigger_next_turn)
                 yield "data: {}\n\n".format(flask.json.dumps(game_data))
@@ -166,6 +169,11 @@ def pointing():
 @app.route('/nextRound')
 def next_round():
     game.next_round()
+    return "OK"
+
+@app.route('/score/<team>/<score>')
+def update_score(team,score):
+    game.scores[team] = score
     return "OK"
 
 
