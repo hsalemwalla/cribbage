@@ -17,6 +17,7 @@ class Game:
         self.count = 0
 
         self.who_passed = {}
+        self.round_play = []
 
     def start_game(self, teams):
         self.teams = teams
@@ -51,6 +52,7 @@ class Game:
     def pass_turn(self, player_name):
         name2player_map = {p.name: p for p in self.players}
         player = name2player_map[player_name]
+
         def verify_pass():
             # Verify players turn
             is_player_turn = self.turn.name == player_name
@@ -97,6 +99,10 @@ class Game:
 
         # Add card to the count
         self.count += card.value
+
+        # Add play to the round play
+        self.round_play.append({'player': player_name,
+                                'card': str(card)})
 
         # Move turn to next player
         all_player_names = [p.name for p in self.players]
