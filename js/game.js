@@ -68,7 +68,7 @@ var app = new Vue({
         if (this.nextRoundAvail) {
           // Only the next round avail button is valid
           if (e.target.innerText === "Next Round") {
-            axios.get('http://'+ ip + ':5000/nextRound/')
+            axios.get('http://'+ ip + ':5000/nextRound')
           }
         } else {
           if (e.target.innerText === "Pass") {

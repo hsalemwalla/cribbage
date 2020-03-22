@@ -19,6 +19,8 @@ class Game:
         self.who_passed = {}
         self.round_play = []
 
+        self.trigger_next_turn = 0
+
     def start_game(self, teams):
         self.teams = teams
         self.players = [teams['team1'].players[0], teams['team2'].players[0],
@@ -31,9 +33,6 @@ class Game:
         self.count = 0
 
         self.deal()
-
-    def new_round(self):
-        pass
 
     def deal(self):
         self.deck.shuffle_deck()
@@ -69,6 +68,7 @@ class Game:
             next_player_index = (all_player_names.index(player_name) + 1) % 4
             self.turn = self.players[next_player_index]
             self.who_passed[player_name] = True
+            self.trigger_next_turn += 1
 
     def play_card(self, player_name, card_suit, card_symbol):
         name2player_map = {p.name: p for p in self.players}
@@ -108,6 +108,7 @@ class Game:
         all_player_names = [p.name for p in self.players]
         next_player_index = (all_player_names.index(player_name) + 1) % 4
         self.turn = self.players[next_player_index]
+        self.trigger_next_turn += 1
 
     def add_to_crib(self, player_name, card_suit, card_symbol):
         name2player_map = {p.name: p for p in self.players}
@@ -148,6 +149,7 @@ class Game:
 
         # Reset round_play
         self.round_play = []
+        self.trigger_next_turn += 1
 
 
 class Team:

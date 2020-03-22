@@ -143,15 +143,15 @@ def pointing():
                      'card_flipped': str(game.card_flipped)}
         yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
-        cur_turn = copy.deepcopy(game.turn)
+        curr_trigger = copy.deepcopy(game.trigger_next_turn)
         while game.phase == 'pointing':
-            if game.turn != cur_turn:
+            if game.trigger_next_turn != curr_trigger:
                 game_data = {'new_count': game.count,
                              'player_turn': game.turn.name,
                              'round_play': game.round_play,
                              'next_round_avail': all(game.who_passed.values()) or game.count == 31,
                              'card_flipped': str(game.card_flipped)}
-                cur_turn = copy.deepcopy(game.turn)
+                curr_trigger = copy.deepcopy(game.trigger_next_turn)
                 yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
         return 'data: Pointing Phase Done\n\n'
@@ -160,7 +160,7 @@ def pointing():
                     mimetype="text/event-stream")
 
 
-@app.route('/nextRound/')
+@app.route('/nextRound')
 def next_round():
     return game.next_round()
 
