@@ -93,6 +93,15 @@ def game_ready():
 @app.route('/playCard/<player_name>/<card>')
 def play_card(player_name, card):
     global game
+    if game.phase != 'pointing':
+        return "OK"
+
+    # We should check if this is the last card to be 
+    # played for the pointing phase
+    if (game.get_total_num_cards_played() == 16):
+        game.pointing_phase_done()
+        return "OK"
+
     if card == "Pass":
         print(player_name + " attempting to pass")
         game.pass_turn(player_name)
@@ -127,44 +136,61 @@ def pointing():
     def checking_for_pointed_cards():
         global game
 
-        # Waiting for all players
-        if len(game.dealer.crib) < 4:
+        try:
+            # Waiting for all players
+            if len(game.dealer.crib) < 4:
+                game_data = {'new_count': game.count,
+                             'dealer': "",
+                             'phase': game.phase,
+                             'player_turn': "",
+                             'round_play': game.round_play,
+                             'next_round_avail': False,
+                             'scores': game.scores,
+                             'card_flipped': "Waiting for other players"}
+                yield "data: {}\n\n".format(flask.json.dumps(game_data))
+
+                while len(game.dealer.crib) < 4:
+                    pass
+
+            # Inital ready game state
             game_data = {'new_count': game.count,
-                         'dealer': "",
-                         'player_turn': "",
+                         'dealer': game.dealer.name,
+                         'phase': game.phase,
+                         'player_turn': game.turn.name,
                          'round_play': game.round_play,
-                         'next_round_avail': False,
+                         'next_round_avail': all(game.who_passed.values()) or game.count == 31,
                          'scores': game.scores,
-                         'card_flipped': "Waiting for other players"}
+                         'card_flipped': str(game.card_flipped)}
             yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
-            while len(game.dealer.crib) < 4:
-                pass
 
-        # Inital ready game state
-        game_data = {'new_count': game.count,
-                     'dealer': game.dealer.name,
-                     'player_turn': game.turn.name,
-                     'round_play': game.round_play,
-                     'next_round_avail': all(game.who_passed.values()) or game.count == 31,
-                     'scores': game.scores,
-                     'card_flipped': str(game.card_flipped)}
-        yield "data: {}\n\n".format(flask.json.dumps(game_data))
+            # Main pointing phase loop
+            curr_trigger = copy.deepcopy(game.trigger_next_turn)
+            while game.phase == 'pointing':
+                if game.trigger_next_turn != curr_trigger:
+                    game_data = {'new_count': game.count,
+                                 'dealer': game.dealer.name,
+                                 'phase': game.phase,
+                                 'player_turn': game.turn.name,
+                                 'round_play': game.round_play,
+                                 'next_round_avail': all(game.who_passed.values()) or game.count == 31,
+                                 'scores': game.scores,
+                                 'card_flipped': str(game.card_flipped)}
+                    curr_trigger = copy.deepcopy(game.trigger_next_turn)
+                    yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
-
-        # Main pointing phase loop
-        curr_trigger = copy.deepcopy(game.trigger_next_turn)
-        while game.phase == 'pointing':
-            if game.trigger_next_turn != curr_trigger:
-                game_data = {'new_count': game.count,
-                             'dealer': game.dealer.name,
-                             'player_turn': game.turn.name,
-                             'round_play': game.round_play,
-                             'next_round_avail': all(game.who_passed.values()) or game.count == 31,
-                             'scores': game.scores,
-                             'card_flipped': str(game.card_flipped)}
-                curr_trigger = copy.deepcopy(game.trigger_next_turn)
-                yield "data: {}\n\n".format(flask.json.dumps(game_data))
+            game_data = {'new_count': game.count,
+                         'dealer': game.dealer.name,
+                         'phase': game.phase,
+                         'player_turn': game.turn.name,
+                         'round_play': game.round_play,
+                         'next_round_avail': False
+                         'scores': game.scores,
+                         'card_flipped': str(game.card_flipped)}
+            yield "data: {}\n\n".format(flask.json.dumps(game_data))
+        except GeneratorExit:
+            print("Client closed pointing phase")
+            return "data: pointing done, client closed\n\n"
 
         return 'data: Pointing Phase Done\n\n'
 

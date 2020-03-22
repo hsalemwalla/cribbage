@@ -71,19 +71,19 @@ var app = new Vue({
     updateScore(e) {
       switch(e.currentTarget.id) {
         case 'team1ScoreIncrease':
-          this.team1Points += 1
+          this.team1Points = parseInt(this.team1Points) + 1
           axios.get('http://'+ ip + ':5000/score/team1/'+this.team1Points)
           break;
         case 'team1ScoreDecrease':
-          this.team1Points -= 1
+          this.team1Points = parseInt(this.team1Points) - 1
           axios.get('http://'+ ip + ':5000/score/team1/'+this.team1Points)
           break;
         case 'team2ScoreIncrease':
-          this.team2Points += 1
+          this.team2Points = parseInt(this.team2Points) + 1
           axios.get('http://'+ ip + ':5000/score/team2/'+this.team2Points)
           break;
         case 'team2ScoreDecrease':
-          this.team2Points -= 1
+          this.team2Points = parseInt(this.team2Points) - 1
           axios.get('http://'+ ip + ':5000/score/team2/'+this.team2Points)
           break;
       }
@@ -154,44 +154,87 @@ function pointing() {
     console.log(e)
     var data = JSON.parse(e.data)
 
-    // The new count after the person played
-    app.pointCount = data.new_count
-    app.drawnCard = data.card_flipped
-    app.nextRoundAvail = data.next_round_avail
+    if (data.phase === 'pointing') {
 
-    // Is it my turn? 
-    app.myTurn = (data.player_turn === myName)
- 
-    // Set the current players turn
-    // Set dealer while we're at it
-    var player_num_turn = -1;
-    for (var i = 0; i < app.players.length; i++) {
-      app.isPlayerTurn[i] = (app.players[i].name === data.player_turn)
-      if (app.players[i].name === data.dealer) {
-        app.players[i].dealer = "Dealer"
-      } else {
-        app.players[i].dealer = ""
+      // The new count after the person played
+      app.pointCount = data.new_count
+      app.drawnCard = data.card_flipped
+      app.nextRoundAvail = data.next_round_avail
+
+      // Is it my turn? 
+      app.myTurn = (data.player_turn === myName)
+
+      // Set the current players turn
+      // Set dealer while we're at it
+      var player_num_turn = -1;
+      for (var i = 0; i < app.players.length; i++) {
+        app.isPlayerTurn[i] = (app.players[i].name === data.player_turn)
+        if (app.players[i].name === data.dealer) {
+          app.players[i].dealer = "Dealer"
+        } else {
+          app.players[i].dealer = ""
+        }
+      }
+
+      // Go through each player, filter out the array with cards that this player played
+      // Then set the players playedCards to the last in the list
+      app.players.forEach( function(player, idx) {
+        var cardsPlayedByPlayer = data.round_play.filter(function(play) {
+          return player.name == play.player
+        })
+        player.playedCards = ""
+        if (cardsPlayedByPlayer.length != 0) {
+          player.playedCards = cardsPlayedByPlayer[cardsPlayedByPlayer.length-1].card
+        }
+      })
+
+      // scores
+      app.team1Points = data.scores.team1
+      app.team2Points = data.scores.team2
+      app.team1ScoreTrack = getScoreTrack(app.team1Points)
+      app.team2ScoreTrack = getScoreTrack(app.team2Points)
+    } else {
+      if (data.phase === 'counting') {
+        app.pointCount = data.new_count
+        app.drawnCard = data.card_flipped
+        app.nextRoundAvail = data.next_round_avail
+
+        // Update whos turn it is
+        var player_num_turn = -1;
+        for (var i = 0; i < app.players.length; i++) {
+          app.isPlayerTurn[i] = (app.players[i].name === data.player_turn)
+          if (app.players[i].name === data.dealer) {
+            app.players[i].dealer = "Dealer"
+          } else {
+            app.players[i].dealer = ""
+          }
+        }
+        // Set played cards to "" for each player
+        app.players.forEach( function(player, idx) {
+          player.playedCards = ""
+        })
+
+        // Scores
+        app.team1Points = data.scores.team1
+        app.team2Points = data.scores.team2
+        app.team1ScoreTrack = getScoreTrack(app.team1Points)
+        app.team2ScoreTrack = getScoreTrack(app.team2Points)
+        pointingEvSrc.close()
+        app.phase = 'counting'
+        getMyCards()
+
       }
     }
-
-    // Go through each player, filter out the array with cards that this player played
-    // Then set the players playedCards to the last in the list
-    app.players.forEach( function(player, idx) {
-      var cardsPlayedByPlayer = data.round_play.filter(function(play) {
-        return player.name == play.player
-      })
-      player.playedCards = ""
-      if (cardsPlayedByPlayer.length != 0) {
-        player.playedCards = cardsPlayedByPlayer[cardsPlayedByPlayer.length-1].card
-      }
-    })
- 
-    // scores
-    app.team1Points = data.scores.team1
-    app.team2Points = data.scores.team2
-    app.team1ScoreTrack = getScoreTrack(app.team1Points)
-    app.team2ScoreTrack = getScoreTrack(app.team2Points)
   }
+}
+
+function counting() {
+  //pointingEvSrc = new EventSource("http://" + ip + ":5000/pointing")
+  //pointingEvSrc.onerror = function(e) {
+    //console.log(e)
+  //}
+  //pointingEvSrc.onmessage = function(e) {
+  console.log("Starting counting phase")
 }
 
 
@@ -207,7 +250,7 @@ function getMyCards() {
         pointing()
       } else if (app.phase === 'pointing') {
         app.phase = 'counting'
-        // counting()
+        counting()
       }
     })
 }

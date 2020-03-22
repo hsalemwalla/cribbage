@@ -137,6 +137,31 @@ class Game:
         # Remove from player's hand
         player.hand.remove(card)
 
+    def pointing_phase_done(self):
+        # Set count to 0
+        self.count = 0
+
+        self.round_play = []
+
+        # Update whose turn it is, one after dealer
+        dealer_index = 0
+        for p,idx in enumerate(self.players):
+            if p == self.dealer:
+                dealer_index = idx
+
+        all_player_names = [p.name for p in self.players]
+        next_player_index = (all_player_names.index(dealer_index) + 1) % 4
+        self.turn = self.players[next_player_index]
+
+        # Change phase to counting
+        self.phase = 'counting'
+
+    def get_total_num_cards_played(self):
+        num_cards = 0
+        for p in self.players:
+            numCards = numCards + p.get_num_cards_played()
+        return num_cards
+
     def next_round(self):
         # Set count to 0
         self.count = 0
@@ -177,6 +202,8 @@ class Player:
         self.pointed = []
         self.crib = []
 
+    def get_num_cards_played(self):
+        return len(self.pointed)
 
 class Deck:
     def __init__(self):
