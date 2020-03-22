@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from cribbage import Player, Team, Game
 import copy
-from flask import Flask, jsonify, Response
+from flask import Flask, Response
 from flask_cors import CORS
 import time
 import flask
@@ -21,6 +21,7 @@ game = Game()
 # *****************************************************************************
 @app.route('/addPlayer/<team>/<name>')
 def add_player(team, name):
+    print("ADDING {} to {}".format(name, team))
     # Add player to player list
     player = Player(name, team)
     global players
@@ -35,6 +36,7 @@ def add_player(team, name):
 
 
 def start_game():
+    print("STARTING GAME")
     global game
     global teams
 
@@ -43,9 +45,9 @@ def start_game():
 
 
 def waiting_for_players():
+    print('WAITING FOR PLAYERS')
     try:
         global game
-
         # The first time this is called, we need to respond correctly
         curr_num_players = len(players)
         setup_data = {'num_players': curr_num_players,
@@ -53,7 +55,7 @@ def waiting_for_players():
                       'player_names': [{'name': p.name, 'team': p.team} for p in game.players]}
         if curr_num_players == 4:
             setup_data['ready'] = 'True'
-
+        print("line 57: yielding player data")
         yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 
         if curr_num_players < 4:
@@ -61,15 +63,18 @@ def waiting_for_players():
             while len(players) < 4:
                 # Update to the right number of players
                 if len(players) != curr_num_players:
+                    print("line 65:updating number of players")
                     curr_num_players = len(players)
                     setup_data['num_players'] = curr_num_players
                     setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
                     yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 
             if curr_num_players == 4:
+                print('line 72: starting game')
                 start_game()
                 setup_data["ready"] = 'True'
                 setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
+                print('line 76: updating number of players')
                 yield "data: {}\n\n".format(flask.json.dumps(setup_data))
     except GeneratorExit:
         print("client closed stream")
@@ -78,6 +83,7 @@ def waiting_for_players():
 
 @app.route('/gameReady')
 def game_ready():
+    print('GAME READY')
     return Response(waiting_for_players(),
                     mimetype="text/event-stream")
 
@@ -113,7 +119,6 @@ def pointing():
 
         cur_count = copy.deepcopy(game.count)
         while game.phase == 'pointing':
-            print(game.phase)
             if game.count != cur_count:
                 game_data = {'new_count': game.count,
                              'player_turn': game.turn.name,
