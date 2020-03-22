@@ -10,11 +10,13 @@ var app = new Vue({
   methods: {
     startGame: function() {
       this.$nextTick()
-      url = "http://" + this.serverIp + ":5000"
-      axios .get(url + '/addPlayer/'+this.team+'/'+this.playerName)
-      var url = 'game.html?name=' + this.playerName + '&team=' + this.team + '&ip=' + this.serverIp
-      window.location.href = url
-
+      var addPlayerUrl = "http://" + this.serverIp + ":5000"
+      axios
+        .get(addPlayerUrl + '/addPlayer/' + this.team + '/' + this.playerName)
+        .then( function () {
+          var url = 'game.html?name=' + this.playerName + '&team=' + this.team + '&ip=' + this.serverIp
+          window.location.href = url
+        })
     }
   }
 });
