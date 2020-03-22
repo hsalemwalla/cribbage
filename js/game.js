@@ -20,6 +20,15 @@ function Player()  {
 }
 
 
+function getCardValue(card) {
+  var value = card.split(' ')[0]
+  if (value === 'ace') { return 10 }
+  else if (value === 'jack') { return 10 }
+  else if (value === 'queen') { return 10 }
+  else if (value === 'king') { return 10 }
+  else { return parseInt(value) }
+}
+
 var app = new Vue({
   el: '#game',
   data() {
@@ -56,6 +65,15 @@ var app = new Vue({
       } else if (this.phase === 'pointing') {
         // Go through my cards, find the card, and kill it
         var cardToPlay = null
+        // Check the card we selected is valid
+        // Check it's my turn
+        // Check it doesn't exceed count
+        if (!this.myTurn) {
+          return
+        }
+        if (getCardValue(e.target.innerText) + this.pointCount > 31) {
+          return
+        }
         for (var i = 0; i < this.myCards.length; i++) {
           if (this.myCards[i] === e.target.innerText) {
             // Get rid of one card
