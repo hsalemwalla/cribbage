@@ -140,6 +140,9 @@ var app = new Vue({
 });
 
 
+/**
+ * Pointing phase
+ */
 function pointing() {
   // begin event source for pointing
   // Also start accepting card played events
@@ -149,8 +152,9 @@ function pointing() {
   }
   pointingEvSrc.onmessage = function(e) {
     console.log(e)
-    // The new count after the person played
     var data = JSON.parse(e.data)
+
+    // The new count after the person played
     app.pointCount = data.new_count
     app.drawnCard = data.card_flipped
     app.nextRoundAvail = data.next_round_avail

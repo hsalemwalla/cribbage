@@ -127,17 +127,21 @@ def pointing():
     def checking_for_pointed_cards():
         global game
 
-        game_data = {'new_count': game.count,
-                     'dealer': game.dealer.name,
-                     'player_turn': game.turn.name,
-                     'round_play': game.round_play,
-                     'next_round_avail': False,
-                     'scores': game.scores,
-                     'card_flipped': "Waiting for other players"}
-        yield "data: {}\n\n".format(flask.json.dumps(game_data))
-        while len(game.dealer.crib) < 4:
-            pass
+        # Waiting for all players
+        if len(game.dealer.crib) < 4:
+            game_data = {'new_count': game.count,
+                         'dealer': "",
+                         'player_turn': "",
+                         'round_play': game.round_play,
+                         'next_round_avail': False,
+                         'scores': game.scores,
+                         'card_flipped': "Waiting for other players"}
+            yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
+            while len(game.dealer.crib) < 4:
+                pass
+
+        # Inital ready game state
         game_data = {'new_count': game.count,
                      'dealer': game.dealer.name,
                      'player_turn': game.turn.name,
@@ -147,6 +151,8 @@ def pointing():
                      'card_flipped': str(game.card_flipped)}
         yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
+
+        # Main pointing phase loop
         curr_trigger = copy.deepcopy(game.trigger_next_turn)
         while game.phase == 'pointing':
             if game.trigger_next_turn != curr_trigger:
