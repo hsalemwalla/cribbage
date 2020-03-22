@@ -30,9 +30,8 @@
                <td class="player">
                   <div v-if="players.length == 4">
                      <b>{{ players[2].name }}</b><br>
+                        {{ players[2].playedCards }} <br>
                   </div>
-                  <!--{{ teams[myTeam][1].playedCards }}-->
-
                </td>
                <td></td>
                <td><b>Point count:</b> <br> {{ pointCount }}</td>
@@ -42,9 +41,8 @@
                <td class="player">
                   <div v-if="players.length == 4">
                      <b>{{ players[1].name }}</b><br>
+                     {{ players[1].playedCards }} <br>
                   </div>
-                  <!--{{ teams[otherTeam][0].playedCards }} <br>-->
-
                </td>
                <td>
                   <div v-if="myTurn">
@@ -54,8 +52,8 @@
                <td class="player">
                   <div v-if="players.length == 4">
                      <b>{{ players[3].name }}</b><br>
+                        {{ players[3].playedCards }} <br>
                   </div>
-                  <!--{{ teams[otherTeam][1].playedCards }}-->
                </td>
             </tr>
             <tr>
@@ -64,8 +62,8 @@
                <td class="player">
                   <div v-if="players.length == 4">
                      <b>{{ players[0].name }}</b><br>
+                        {{ players[0].playedCards }} <br>
                   </div>
-                  <!--{{ teams[myTeam][0].playedCards }}-->
                </td>
                <td></td>
             </tr>
@@ -83,7 +81,7 @@
                      <button v-on:click="selectCard"> Pass </button>
                   </div>
                </td>
-               <td class="card" v-if="nextRoundAvail">
+               <td class="card" v-if="nextRoundAvail && myTurn">
                   <div>
                      <button v-on:click="selectCard"> Next Round </button>
                   </div>
