@@ -52,7 +52,7 @@ function pointing() {
   pointingEvSrc = new EventSource("http://" + ip + ":5000/pointing")
   pointingEvSrc.onerror = function(e) {
     console.log(e)
-    pointingEvSrc.close()
+    //pointingEvSrc.close()
   }
   pointingEvSrc.onmessage = function(e) {
     console.log(e)
