@@ -144,18 +144,19 @@ var app = new Vue({
     newHand(e) {
       console.log(e)
       
+      var self = this
       axios.get('http://'+ ip + '/newHand')
       .then(function(response) {
-        this.phase = 'init'
+        self.phase = 'init'
         // Clean my shit up
-        this.drawnCard = null
-        this.pointCount = 0
-        this.myCards = []
-        this.crib = []
-        this.myTurn = false
-        this.nextRoundAvail = false
-        this.allDone = false
-        this.isPlayerTurn = [false,false,false,false]
+        self.drawnCard = null
+        self.pointCount = 0
+        self.myCards = []
+        self.crib = []
+        self.myTurn = false
+        self.nextRoundAvail = false
+        self.allDone = false
+        self.isPlayerTurn = [false,false,false,false]
         getMyCards()
 
       })
@@ -266,7 +267,8 @@ function counting() {
       // Show the next round avail button, and hide the pass button
 
 
-      // Show all cards
+      // Is it my turn? 
+      app.myTurn = (data.player_turn === myName)
 
       // Dealer and player turn
       var player_num_turn = -1;
