@@ -162,8 +162,7 @@ def pointing():
 
 @app.route('/nextRound')
 def next_round():
-    return game.next_round()
-
+    game.next_round()
     return "OK"
 
 
