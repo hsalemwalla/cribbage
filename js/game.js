@@ -49,8 +49,12 @@ var app = new Vue({
 function pointing() {
   // begin event source for pointing
   // Also start accepting card played events
-  gameReadyEvSrc = new EventSource("http://" + ip + ":5000/pointing")
-  gameReadyEvSrc.onmessage = function(e) {
+  pointingEvSrc = new EventSource("http://" + ip + ":5000/pointing")
+  pointingEvSrc.onerror = function(e) {
+    console.log(e)
+    pointingEvSrc.close()
+  }
+  pointingEvSrc.onmessage = function(e) {
     console.log(e)
     // The new count after the person played
     app.pointCount = data.new_count
@@ -71,6 +75,10 @@ function getMyCards() {
 // We will receive a "Game is ready" in the data when the 
 // backend has seen all the players have joined
 gameReadyEvSrc = new EventSource("http://" + ip + ":5000/gameReady")
+gameReadyEvSrc.onerror = function(e) {
+  console.log(e)
+  gameReadyEvSrc.close()
+}
 gameReadyEvSrc.onmessage = function(e) {
   console.log(e)
   var data = JSON.parse(e.data)
@@ -96,7 +104,7 @@ gameReadyEvSrc.onmessage = function(e) {
     gameReadyEvSrc.close()
 
     getMyCards()
-    pointing()
+    //pointing()
   }
 }
 
