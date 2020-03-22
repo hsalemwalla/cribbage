@@ -130,6 +130,15 @@ def pointing():
         game_data = {'new_count': game.count,
                      'player_turn': game.turn.name,
                      'round_play': game.round_play,
+                     'next_round_avail': False,
+                     'card_flipped': "Waiting for other players"}
+        yield "data: {}\n\n".format(flask.json.dumps(game_data))
+        while len(game.dealer.crib) < 4:
+            pass
+
+        game_data = {'new_count': game.count,
+                     'player_turn': game.turn.name,
+                     'round_play': game.round_play,
                      'next_round_avail': all(game.who_passed.values()) or game.count == 31,
                      'card_flipped': str(game.card_flipped)}
         yield "data: {}\n\n".format(flask.json.dumps(game_data))
