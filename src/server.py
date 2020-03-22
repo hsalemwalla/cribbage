@@ -257,6 +257,11 @@ def next_round():
     game.next_round()
     return "OK"
 
+@app.route('/newHand')
+def new_hand():
+    game.new_hand()
+    return "OK"
+
 @app.route('/score/<team>/<score>')
 def update_score(team,score):
     game.scores[team] = score

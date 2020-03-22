@@ -39,6 +39,21 @@ class Game:
 
         self.deal()
 
+    def new_hand(self):
+        self.who_passed = {p.name: False for p in self.players}
+        self.phase = 'pointing'
+
+        dealer_index = (self.players.index(self.dealer) + 1) % 4
+        self.dealer = self.players[dealer_index]
+        self.turn = self.players[(dealer_index+1) % 4]
+
+        self.count = 0
+        self.card_flipped = None
+        self.round_play = []
+
+        self.deal()
+
+
     def deal(self):
         self.deck.shuffle_deck()
         dealing_deck = copy.deepcopy(self.deck.deck)

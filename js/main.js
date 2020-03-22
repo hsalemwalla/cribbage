@@ -5,7 +5,7 @@ var app = new Vue({
     playerName: "",
     team: "team1",
     ready: false,
-    serverIp: "localhost"
+    serverIp: "localhost:5000"
   },
   methods: {
     startGame: function() {
