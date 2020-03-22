@@ -78,6 +78,10 @@
                <td class="card" v-for="card in myCards">
                   <button v-on:click="selectCard"> {{ card }} </button>
                </td>
+               <td class="card">
+                  <div>
+                     <button v-on:click="selectCard"> Pass </button>
+                  </div>
             </tr>
          </table>
       </div>

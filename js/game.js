@@ -22,7 +22,7 @@ function Player()  {
 
 function getCardValue(card) {
   var value = card.split(' ')[0]
-  if (value === 'A') { return 10 }
+  if (value === 'A') { return 1 }
   else if (value === 'J') { return 10 }
   else if (value === 'Q') { return 10 }
   else if (value === 'K') { return 10 }
@@ -63,6 +63,9 @@ var app = new Vue({
         axios.get('http://'+ ip + ':5000/addToCrib/'+myName+'/'+e.target.innerText)
         .then(getMyCards)
       } else if (this.phase === 'pointing') {
+        if (e.target.innerText === "Pass") {
+          axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
+        }
         // Go through my cards, find the card, and kill it
         var cardToPlay = null
         // Check the card we selected is valid

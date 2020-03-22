@@ -46,6 +46,25 @@ class Game:
         hand_json = json.dumps([str(c) for c in hand])
         return hand_json
 
+    def pass_turn(self, player_name):
+        name2player_map = {p.name: p for p in self.players}
+        player = name2player_map[player_name]
+        def verify_pass():
+            # Verify players turn
+            is_player_turn = self.turn.name == player_name
+            cards_not_played = [c for c in player.hand if c not in player.pointed]
+            # Check that all the not played cards are illegal
+            for c in cards_not_played:
+                if (c.value + self.count) <= 31:
+                    return False
+            return True
+        legal_pass = verify_pass()
+        if legal_pass:
+            # Move turn to next player
+            all_player_names = [p.name for p in self.players]
+            next_player_index = (all_player_names.index(player_name) + 1) % 4
+            self.turn = self.players[next_player_index]
+
     def play_card(self, player_name, card_suit, card_symbol):
         name2player_map = {p.name: p for p in self.players}
         player = name2player_map[player_name]
