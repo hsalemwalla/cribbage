@@ -81,10 +81,11 @@ function pointing() {
   pointingEvSrc.onmessage = function(e) {
     console.log(e)
     // The new count after the person played
-    app.pointCount = e.data.new_count
-    app.drawnCard = e.data.card_flipped
+    var data = JSON.parse(e.data)
+    app.pointCount = data.new_count
+    app.drawnCard = data.card_flipped
     // Is it my turn? 
-    app.myTurn = (e.data.player_turn === myName)
+    app.myTurn = (data.player_turn === myName)
     
   }
 }
