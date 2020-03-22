@@ -64,6 +64,7 @@ var app = new Vue({
       myTurn: false,
       phase: 'init',
       nextRoundAvail: false,
+      allDone: false,
       isPlayerTurn: [false,false,false,false]
     }
   },
@@ -135,10 +136,14 @@ var app = new Vue({
           }
         }
       } else if (this.phase === 'counting') {
-        if (e.target.innerText === "Next Round") {
+        if (e.target.innerText === "Pass") {
           axios.get('http://'+ ip + ':5000/playCard/'+myName+'/cribNextTurn')
         }
       }
+    },
+    newHand(e) {
+      console.log(e)
+      //axios.get('http://'+ ip + ':5000/newHand')
     }
   }
 });
@@ -244,7 +249,9 @@ function counting() {
       // The new count after the person played
       app.drawnCard = data.card_flipped
       // Show the next round avail button, and hide the pass button
-      app.nextRoundAvail = data.next_round_avail
+
+      // Show the newHand button
+      app.allDone = data.all_done_counting
 
       // Show all cards
 
@@ -252,6 +259,7 @@ function counting() {
       var player_num_turn = -1;
       for (var i = 0; i < app.players.length; i++) {
         // Set the players cards
+        app.players[i].playedCards = ""
         data.all_cards[app.players[i].name].forEach(function(card, idx) {
           app.players[i].playedCards += card
           app.players[i].playedCards += "\n"

@@ -78,8 +78,12 @@ class Game:
 
         def verify_pass():
             # Verify players turn
-            cards_not_played = [c for c in player.hand if c not in player.pointed]
+            is_player_turn = self.turn.name == player_name
+            if not is_player_turn:
+                return False
+
             # Check that all the not played cards are illegal
+            cards_not_played = [c for c in player.hand if c not in player.pointed]
             for c in cards_not_played:
                 if (c.value + self.count) <= 31:
                     return False
@@ -168,6 +172,7 @@ class Game:
             if p == self.dealer:
                 dealer_index = idx
 
+        self.who_passed = {p.name: False for p in self.players}
         all_player_names = [p.name for p in self.players]
         next_player_index = (dealer_index + 1) % 4
         self.turn = self.players[next_player_index]

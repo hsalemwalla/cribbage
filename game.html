@@ -105,12 +105,17 @@
                </td>
                <td class="card">
                   <div>
-                     <button v-on:click="selectCard" v-if="!nextRoundAvail"> Pass </button>
+                     <button v-on:click="selectCard"> Pass </button>
                   </div>
                </td>
                <td class="card" v-if="nextRoundAvail && myTurn">
                   <div>
                      <button v-on:click="selectCard"> Next Round </button>
+                  </div>
+               </td>
+               <td class="card" v-if="allDone">
+                  <div>
+                     <button v-on:click="newHand"> Next Hand </button>
                   </div>
                </td>
             </tr>
