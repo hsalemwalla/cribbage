@@ -44,7 +44,8 @@ var app = new Vue({
       myCards: [],
       crib: [],
       myTurn: false,
-      phase: 'init'
+      phase: 'init',
+      nextRoundAvail: false
     }
   },
   methods: {
@@ -106,6 +107,7 @@ function pointing() {
     var data = JSON.parse(e.data)
     app.pointCount = data.new_count
     app.drawnCard = data.card_flipped
+    app.nextRoundAvail = data.next_round_avail
     // Is it my turn? 
     app.myTurn = (data.player_turn === myName)
     

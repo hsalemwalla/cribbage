@@ -6,7 +6,6 @@ import json
 class Game:
     def __init__(self):
         self.teams = []
-        self.num_teams = 0
         self.players = []
         self.turn = None
         self.dealer = None
@@ -17,10 +16,13 @@ class Game:
         self.phase = 'setup'
         self.count = 0
 
+        self.who_passed = {}
+
     def start_game(self, teams):
         self.teams = teams
         self.players = [teams['team1'].players[0], teams['team2'].players[0],
                         teams['team1'].players[1], teams['team2'].players[1]]
+        self.who_passed = {p.name: False for p in players}
         self.dealer = self.players[0]
         self.turn = self.players[1]
 
@@ -64,6 +66,7 @@ class Game:
             all_player_names = [p.name for p in self.players]
             next_player_index = (all_player_names.index(player_name) + 1) % 4
             self.turn = self.players[next_player_index]
+            who_passed[player_name] = True
 
     def play_card(self, player_name, card_suit, card_symbol):
         name2player_map = {p.name: p for p in self.players}

@@ -82,6 +82,12 @@
                   <div>
                      <button v-on:click="selectCard"> Pass </button>
                   </div>
+               </td>
+               <td class="card" v-if="nextRoundAvail">
+                  <div>
+                     <button v-on:click="selectCard"> Next Round </button>
+                  </div>
+               </td>
             </tr>
          </table>
       </div>
