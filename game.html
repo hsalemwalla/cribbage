@@ -46,7 +46,7 @@
             <tr>
                <td width="150px"><b>Drawn card:</b> <br>{{ drawnCard }}</td>
                <td></td>
-               <td class="player">
+               <td v-bind:class="[{activePlayer: isPlayerTurn[2]}]" class="player">
                   <div v-if="players.length == 4">
                         {{ players[2].dealer }}<br>
                      <b>{{ players[2].name }}</b><br>
@@ -58,7 +58,7 @@
             </tr>
             <tr>
                <td></td>
-               <td class="player">
+               <td v-bind:class="[{activePlayer: isPlayerTurn[1]}]" class="player">
                   <div v-if="players.length == 4">
                         {{ players[1].dealer }}<br>
                      <b>{{ players[1].name }}</b><br>
@@ -70,7 +70,7 @@
                      It's your turn!
                   </div>
                </td>
-               <td class="player">
+               <td v-bind:class="[{activePlayer: isPlayerTurn[3]}]" class="player">
                   <div v-if="players.length == 4">
                         {{ players[3].dealer }}<br>
                      <b>{{ players[3].name }}</b><br>
@@ -81,7 +81,7 @@
             <tr>
                <td></td>
                <td></td>
-               <td class="player">
+               <td v-bind:class="[{activePlayer: isPlayerTurn[0]}]" class="player">
                   <div v-if="players.length == 4">
                         {{ players[0].dealer }}<br>
                      <b>{{ players[0].name }}</b><br>

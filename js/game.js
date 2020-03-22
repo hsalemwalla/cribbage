@@ -64,8 +64,7 @@ var app = new Vue({
       myTurn: false,
       phase: 'init',
       nextRoundAvail: false,
-      whosTurn: ""
-
+      isPlayerTurn: [false,false,false,false]
     }
   },
   methods: {
@@ -91,7 +90,7 @@ var app = new Vue({
     },
     selectCard(e) {
       if (this.phase === 'select_crib') {
-        console.assert(this.myCards.length === 5, "myCards is not 5") // We should have 5 cards if we are in this phase
+        console.assert(this.myCards.length === 5, "myCards is not 5") 
         // Go through my cards, find the card, and kill it
         var cribCard = null
         for (var i = 0; i < this.myCards.length; i++) {
@@ -155,23 +154,21 @@ function pointing() {
     app.pointCount = data.new_count
     app.drawnCard = data.card_flipped
     app.nextRoundAvail = data.next_round_avail
+
     // Is it my turn? 
     app.myTurn = (data.player_turn === myName)
-
-    // Set dealer
+ 
+    // Set the current players turn
+    // Set dealer while we're at it
+    var player_num_turn = -1;
     for (var i = 0; i < app.players.length; i++) {
+      app.isPlayerTurn[i] = (app.players[i].name === data.player_turn)
       if (app.players[i].name === data.dealer) {
         app.players[i].dealer = "Dealer"
       } else {
         app.players[i].dealer = ""
       }
     }
-
-    // scores
-    app.team1Points = data.scores.team1
-    app.team2Points = data.scores.team2
-    app.team1ScoreTrack = getScoreTrack(app.team1Points)
-    app.team2ScoreTrack = getScoreTrack(app.team2Points)
 
     // Go through each player, filter out the array with cards that this player played
     // Then set the players playedCards to the last in the list
@@ -184,7 +181,12 @@ function pointing() {
         player.playedCards = cardsPlayedByPlayer[cardsPlayedByPlayer.length-1].card
       }
     })
-    
+ 
+    // scores
+    app.team1Points = data.scores.team1
+    app.team2Points = data.scores.team2
+    app.team1ScoreTrack = getScoreTrack(app.team1Points)
+    app.team2ScoreTrack = getScoreTrack(app.team2Points)
   }
 }
 
@@ -194,15 +196,17 @@ function getMyCards() {
     .get('http://' + ip + ':5000/getCardsForPlayer/'+myName)
     .then(function(response) {
       app.myCards = response.data
-      if (app.phase === 'select_crib') {
+      if (app.phase === 'init') {
+        app.phase = 'select_crib'
+      } else if (app.phase === 'select_crib') {
         app.phase = 'pointing'
         pointing()
-      } else if (app.phase === 'init') {
-        app.phase = 'select_crib'
+      } else if (app.phase === 'pointing') {
+        app.phase = 'counting'
+        // counting()
       }
     })
 }
-
 
 // Wait for all the players
 // We will receive a "Game is ready" in the data when the 
