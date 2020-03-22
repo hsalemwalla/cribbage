@@ -92,7 +92,7 @@ def game_ready():
 # *****************************************************************************
 @app.route('/playCard/<player_name>/<card>')
 def play_card(player_name, card):
-    card_symbol, card_suit = card.split('%20')
+    card_symbol, card_suit = card.split(' ')
     global game
     game.play_card(player_name, card_suit, card_symbol)
 
@@ -106,7 +106,7 @@ def get_cards_for_player(name):
 
 @app.route('/addToCrib/<player_name>/<card>')
 def add_to_crib(player_name, card):
-    card_symbol, card_suit = card.split('%20')
+    card_symbol, card_suit = card.split(' ')
     global game
     game.add_to_crib(player_name, card_suit, card_symbol)
 
