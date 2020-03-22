@@ -10,7 +10,7 @@ var app = new Vue({
   methods: {
     startGame: function() {
       this.$nextTick()
-      var addPlayerUrl = "http://" + this.serverIp
+      var addPlayerUrl = "http://" + this.serverIp + ":5000"
       var self = this
       axios
         .get(addPlayerUrl + '/addPlayer/' + this.team + '/' + this.playerName)
