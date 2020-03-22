@@ -148,7 +148,6 @@ class Game:
 
         # Reset round_play
         self.round_play = []
-:wq
 
 
 class Team:
