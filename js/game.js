@@ -125,7 +125,7 @@ function pointing() {
       var cardsPlayedByPlayer = data.round_play.filter(function(play) {
         return player.name == play.player
       })
-      player.playedCards = cardsPlayedByPlayer[-1].card
+      player.playedCards = cardsPlayedByPlayer[cardsPlayedByPlayer.length-1].card
     })
     
   }
