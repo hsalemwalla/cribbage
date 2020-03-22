@@ -34,7 +34,7 @@ class Game:
         self.dealer = self.players[dealer_index]
         self.turn = self.players[(dealer_index + 1) % 4]
 
-        self.phase = 'dealing'
+        self.phase = 'pointing'
         self.count = 0
 
         self.deal()
@@ -173,6 +173,7 @@ class Game:
                 dealer_index = idx
 
         self.who_passed = {p.name: False for p in self.players}
+        all_player_names = [p.name for p in self.players]
         next_player_index = (dealer_index + 1) % 4
         self.turn = self.players[next_player_index]
 
@@ -204,24 +205,6 @@ class Game:
         self.round_play = []
         self.trigger_next_turn += 1
 
-    def new_hand(self):
-        # Reset backend specific values
-        self.who_passed = {p.name: False for p in self.players}
-        self.phase = 'dealing'
-
-        # Update dealer & first to play
-        dealer_index = (self.players.index(self.dealer) + 1) % 4
-        self.dealer = self.players[dealer_index]
-        self.turn = self.players[(dealer_index + 1) % 4]
-
-        # Update values for UI
-        self.count = 0
-        self.card_flipped = None
-        self.round_play = []
-
-        # Deal new hand
-        self.deal()
-
 
 class Team:
     def __init__(self):
@@ -246,7 +229,6 @@ class Player:
 
     def get_num_cards_played(self):
         return len(self.pointed)
-
 
 class Deck:
     def __init__(self):
