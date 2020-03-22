@@ -125,6 +125,7 @@ function pointing() {
       var cardsPlayedByPlayer = data.round_play.filter(function(play) {
         return player.name == play.player
       })
+      player.playedCards = ""
       if (cardsPlayedByPlayer.length != 0) {
         player.playedCards = cardsPlayedByPlayer[cardsPlayedByPlayer.length-1].card
       }
