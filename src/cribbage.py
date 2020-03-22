@@ -140,7 +140,7 @@ class Game:
         self.count = 0
 
         # Reset who has passed
-        self.who_passed = {}
+        self.who_passed = {p.name: False for p in self.players}
 
         # Update whose turn it is
         last_to_play = self.round_play[-1]['player']
