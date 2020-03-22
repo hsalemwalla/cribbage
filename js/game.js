@@ -327,11 +327,11 @@ function getMyCards() {
     app.nextRoundAvail = false
     app.allDone = false
     app.isPlayerTurn = [false,false,false,false]
+    app.players.forEach(function(player, idx) {
+      player.playedCards = ""
+    })
   }
   
-  self.players.forEach(function(player, idx) {
-    player.playedCards = ""
-  })
   
   axios
     .get('http://' + ip + '/getCardsForPlayer/'+myName)
