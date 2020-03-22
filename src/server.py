@@ -202,7 +202,8 @@ def pointing():
 
     return Response(checking_for_pointed_cards(),
                     mimetype="text/event-stream")
-    
+
+
 @app.route('/counting')
 def counting():
     print("Client called counting")
@@ -211,12 +212,13 @@ def counting():
         global game
 
         try:
-            # Inital ready game state
+            # Initial ready game state
             game_data = {'dealer': game.dealer.name,
                          'phase': game.phase,
                          'all_cards': game.get_all_cards(),
                          'player_turn': game.turn.name,
                          'all_done_counting': all(game.who_passed.values()),
+                         'reset': False,
                          'scores': game.scores,
                          'card_flipped': str(game.card_flipped)}
             yield "data: {}\n\n".format(flask.json.dumps(game_data))
@@ -229,6 +231,7 @@ def counting():
                                  'phase': game.phase,
                                  'player_turn': game.turn.name,
                                  'all_done_counting': all(game.who_passed.values()),
+                                 'reset': False,
                                  'all_cards': game.get_all_cards(),
                                  'scores': game.scores,
                                  'card_flipped': str(game.card_flipped)}
@@ -240,6 +243,7 @@ def counting():
                          'player_turn': "",
                          'all_cards': game.get_all_cards(),
                          'all_done_counting': all(game.who_passed.values()),
+                         'reset': True,
                          'scores': game.scores,
                          'card_flipped': ""}
             yield "data: {}\n\n".format(flask.json.dumps(game_data))
@@ -254,16 +258,23 @@ def counting():
 
 @app.route('/nextRound')
 def next_round():
+    global game
     game.next_round()
     return "OK"
 
+
 @app.route('/newHand')
 def new_hand():
-    game.new_hand()
+    global game
+    game.ready_for_new_hand_counter += 1
+    if game.ready_for_new_hand_counter == 4:
+        game.new_hand()
     return "OK"
+
 
 @app.route('/score/<team>/<score>')
 def update_score(team,score):
+    global game
     game.scores[team] = score
     game.trigger_next_turn += 1
     return "OK"
