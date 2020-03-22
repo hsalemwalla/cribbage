@@ -34,13 +34,29 @@ var app = new Vue({
       pointCount: 0,
       myCards: [],
       crib: [],
-      myTurn: false
+      myTurn: false,
+      phase: 'init'
     }
   },
   methods: {
-    playCard(e) {
-      console.log(e.target.innerText);
-      axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
+    selectCard(e) {
+      if (this.phase === 'select_crib') {
+        console.assert(this.myCards.length === 5, "myCards is not 5") // We should have 5 cards if we are in this phase
+        // Go through my cards, find the card, and kill it
+        var cribCard = null
+        for (var i = 0; i < this.myCards.length; i++) {
+          if (this.myCards[i] === e.target.innerText) {
+            // Get rid of one card
+            cribCard = this.myCards.splice(i,1)
+          }
+        }
+        console.assert(cribCard != null, "cribCard is null")
+        axios.get('http://'+ ip + ':5000/addToCrib/'+myName+'/'+e.target.innerText)
+        .then(getMyCards)
+      } else {
+        console.log(e.target.innerText);
+        axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
+      }
     }
   }
 });
@@ -52,7 +68,6 @@ function pointing() {
   pointingEvSrc = new EventSource("http://" + ip + ":5000/pointing")
   pointingEvSrc.onerror = function(e) {
     console.log(e)
-    //pointingEvSrc.close()
   }
   pointingEvSrc.onmessage = function(e) {
     console.log(e)
@@ -67,7 +82,10 @@ function pointing() {
 function getMyCards() {
   axios
     .get('http://' + ip + ':5000/getCardsForPlayer/'+myName)
-    .then(response => (app.myCards = response.data))
+    .then(function(response) {
+      app.myCards = response.data
+      app.phase = 'select_crib'
+    })
 }
 
 
@@ -77,7 +95,6 @@ function getMyCards() {
 gameReadyEvSrc = new EventSource("http://" + ip + ":5000/gameReady")
 gameReadyEvSrc.onerror = function(e) {
   console.log(e)
-  //gameReadyEvSrc.close()
 }
 gameReadyEvSrc.onmessage = function(e) {
   console.log(e)
@@ -104,6 +121,7 @@ gameReadyEvSrc.onmessage = function(e) {
     gameReadyEvSrc.close()
 
     getMyCards()
+
     //pointing()
   }
 }
