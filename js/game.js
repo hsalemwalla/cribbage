@@ -313,6 +313,8 @@ function getMyCards() {
     app.phase = 'select_crib'
   } else if (app.phase === 'select_crib') {
     app.phase = 'pointing'
+  } else if (app.phase === 'pointing') {
+    app.phase = 'counting'
   } else if (app.phase === 'counting') {
     app.phase = 'select-crib'
   }
