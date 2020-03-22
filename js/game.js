@@ -10,6 +10,7 @@ function getParameterByName(name, url) {
 
 var myName = getParameterByName('name')
 var myTeam = getParameterByName('team')
+var ip = getParameterByName('ip')
 
 function Player()  {
   this.name = ""
@@ -39,7 +40,7 @@ var app = new Vue({
   methods: {
     playCard(e) {
       console.log(e.target.innerText);
-      axios.get('http://localhost:5000/playCard/'+myName+'/'+e.target.innerText)
+      axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
     }
   }
 });
@@ -48,7 +49,7 @@ var app = new Vue({
 function pointing() {
   // begin event source for pointing
   // Also start accepting card played events
-  gameReadyEvSrc = new EventSource("http://localhost:5000/pointing")
+  gameReadyEvSrc = new EventSource("http://" + ip + ":5000/pointing")
   gameReadyEvSrc.onmessage = function(e) {
     console.log(e)
     // The new count after the person played
@@ -61,7 +62,7 @@ function pointing() {
 
 function getMyCards() {
   axios
-    .get('http://localhost:5000/getCardsForPlayer/'+myName)
+    .get('http://' + ip + ':5000/getCardsForPlayer/'+myName)
     .then(response => (app.myCards = response.data))
 }
 
@@ -69,7 +70,7 @@ function getMyCards() {
 // Wait for all the players
 // We will receive a "Game is ready" in the data when the 
 // backend has seen all the players have joined
-gameReadyEvSrc = new EventSource("http://localhost:5000/gameReady")
+gameReadyEvSrc = new EventSource("http://" + ip + ":5000/gameReady")
 gameReadyEvSrc.onmessage = function(e) {
   console.log(e)
   var data = JSON.parse(e.data)

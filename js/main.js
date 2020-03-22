@@ -2,14 +2,16 @@ var app = new Vue({
   el: '#main',
   data: {
     title: "Cribbage Online",
-    playerName: "Hussein",
+    playerName: "",
     team: "team1",
-    ready: false
+    ready: false,
+    serverIp: "localhost"
   },
   methods: {
     startGame: function() {
-      axios .get('http://localhost:5000/addPlayer/'+this.team+'/'+this.playerName)
-      var url = 'game.html?name=' + this.playerName + '&team=' + this.team
+      url = "http://" + this.serverIp + ":5000"
+      axios .get(url + '/addPlayer/'+this.team+'/'+this.playerName)
+      var url = 'game.html?name=' + this.playerName + '&team=' + this.team + '&ip=' + this.serverIp
       window.location.href = url
 
     }
