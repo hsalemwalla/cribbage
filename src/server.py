@@ -128,20 +128,20 @@ def pointing():
 
         game_data = {'new_count': game.count,
                      'player_turn': game.turn.name,
-                     'next_round_avail': all(game.who_passed.values()),
                      'round_play': game.round_play,
+                     'next_round_avail': all(game.who_passed.values()) or game.count == 31,
                      'card_flipped': str(game.card_flipped)}
         yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
-        cur_count = copy.deepcopy(game.count)
         cur_turn = copy.deepcopy(game.turn)
         while game.phase == 'pointing':
             if game.turn != cur_turn:
                 game_data = {'new_count': game.count,
                              'player_turn': game.turn.name,
                              'round_play': game.round_play,
+                             'next_round_avail': all(game.who_passed.values()) or game.count == 31,
                              'card_flipped': str(game.card_flipped)}
-                cur_count = copy.deepcopy(game.count)
+                cur_turn = copy.deepcopy(game.turn)
                 yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
         return 'data: Pointing Phase Done\n\n'
