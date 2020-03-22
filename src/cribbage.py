@@ -18,8 +18,8 @@ class Game:
 
     def start_game(self, teams):
         self.teams = teams
-        self.players = [teams[0].players[0], teams[1].players[0],
-                        teams[0].players[1], teams[1].players[1]]
+        self.players = [teams['team1'].players[0], teams['team2'].players[0],
+                        teams['team1'].players[1], teams['team2'].players[1]]
 
         self.phase = 'pointing'
         self.count = 0
