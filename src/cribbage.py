@@ -132,6 +132,24 @@ class Game:
         # Remove from player's hand
         player.hand.remove(card)
 
+    def next_round(self):
+        # Set count to 0
+        self.count = 0
+
+        # Reset who has passed
+        self.who_passed = {}
+
+        # Update whose turn it is
+        last_to_play = self.round_play[-1]['player']
+
+        all_player_names = [p.name for p in self.players]
+        next_player_index = (all_player_names.index(last_to_play) + 1) % 4
+        self.turn = self.players[next_player_index]
+
+        # Reset round_play
+        self.round_play = []
+:wq
+
 
 class Team:
     def __init__(self):
