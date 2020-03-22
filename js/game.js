@@ -143,7 +143,12 @@ var app = new Vue({
     },
     newHand(e) {
       console.log(e)
-      //axios.get('http://'+ ip + ':5000/newHand')
+      axios.get('http://'+ ip + ':5000/newHand')
+      .then(function(response) {
+        this.phase = 'init'
+        getMyCards()
+
+      })
     }
   }
 });
@@ -237,11 +242,11 @@ function pointing() {
 }
 
 function counting() {
-  pointingEvSrc = new EventSource("http://" + ip + ":5000/counting")
-  pointingEvSrc.onerror = function(e) {
+  countingEvSrc = new EventSource("http://" + ip + ":5000/counting")
+  countingEvSrc.onerror = function(e) {
     console.log(e)
   }
-  pointingEvSrc.onmessage = function(e) {
+  countingEvSrc.onmessage = function(e) {
     console.log(e)
     var data = JSON.parse(e.data)
 
@@ -250,8 +255,6 @@ function counting() {
       app.drawnCard = data.card_flipped
       // Show the next round avail button, and hide the pass button
 
-      // Show the newHand button
-      app.allDone = data.all_done_counting
 
       // Show all cards
 
@@ -284,6 +287,12 @@ function counting() {
       app.team2Points = data.scores.team2
       app.team1ScoreTrack = getScoreTrack(app.team1Points)
       app.team2ScoreTrack = getScoreTrack(app.team2Points)
+      
+      // Show the newHand button and close this event source
+      app.allDone = data.all_done_counting
+      if (app.allDone) {
+        countingEvSrc.close()
+      }
     }
 
   }
