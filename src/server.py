@@ -122,7 +122,7 @@ def pointing():
 
         game_data = {'new_count': game.count,
                      'player_turn': game.turn.name,
-                     'card_flipped': game.card_flipped}
+                     'card_flipped': str(game.card_flipped)}
         yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
         cur_count = copy.deepcopy(game.count)
@@ -130,7 +130,7 @@ def pointing():
             if game.count != cur_count:
                 game_data = {'new_count': game.count,
                              'player_turn': game.turn.name,
-                             'card_flipped': game.card_flipped}
+                             'card_flipped': str(game.card_flipped)}
                 cur_count = copy.deepcopy(game.count)
                 yield "data: {}\n\n".format(flask.json.dumps(game_data))
 

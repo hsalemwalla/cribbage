@@ -73,7 +73,7 @@ class Game:
         player = name2player_map[player_name]
         player.pointed.append(card)
 
-        # Add card to the points
+        # Add card to the count
         self.count += card.value
 
         # Move turn to next player
