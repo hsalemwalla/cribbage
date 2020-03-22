@@ -60,7 +60,7 @@ var app = new Vue({
       drawnCard: null,
       pointCount: 0,
       myCards: [],
-      crib: [],
+      crib: "",
       myTurn: false,
       phase: 'init',
       nextRoundAvail: false,
@@ -147,16 +147,6 @@ var app = new Vue({
       var self = this
       axios.get('http://'+ ip + '/newHand')
       .then(function(response) {
-        self.phase = 'init'
-        // Clean my shit up
-        self.drawnCard = null
-        self.pointCount = 0
-        self.myCards = []
-        self.crib = []
-        self.myTurn = false
-        self.nextRoundAvail = false
-        self.allDone = false
-        self.isPlayerTurn = [false,false,false,false]
         getMyCards()
 
       })
@@ -277,7 +267,7 @@ function counting() {
         app.players[i].playedCards = ""
         data.all_cards[app.players[i].name].forEach(function(card, idx) {
           app.players[i].playedCards += card
-          app.players[i].playedCards += "\n"
+          app.players[i].playedCards += "<br>"
         })
 
         // Whos turn is it
@@ -292,7 +282,12 @@ function counting() {
       }
 
       // Set the crib
-      app.crib = data.all_cards['crib']
+      
+      app.crib = ""
+      data.all_cards['crib'].forEach(function(card, idx) {
+        app.crib += card
+        app.crib += "<br>"
+      })
 
       // Scores
       app.team1Points = data.scores.team1
@@ -313,17 +308,38 @@ function counting() {
 
 
 function getMyCards() {
+  // Clean my shit up
+  if (app.phase === 'init') {
+    app.phase = 'select_crib'
+  } else if (app.phase === 'select_crib') {
+    app.phase = 'pointing'
+  } else if (app.phase === 'counting') {
+    app.phase = 'select-crib'
+  }
+
+  // Clean up unless we are moving from pointing->counting
+  if (app.phase != 'counting') {
+    app.drawnCard = null
+    app.pointCount = 0
+    app.myCards = []
+    app.crib = ""
+    app.myTurn = false
+    app.nextRoundAvail = false
+    app.allDone = false
+    app.isPlayerTurn = [false,false,false,false]
+  }
+  
+  self.players.forEach(function(player, idx) {
+    player.playedCards = ""
+  })
+  
   axios
     .get('http://' + ip + '/getCardsForPlayer/'+myName)
     .then(function(response) {
       app.myCards = response.data
-      if (app.phase === 'init') {
-        app.phase = 'select_crib'
-      } else if (app.phase === 'select_crib') {
-        app.phase = 'pointing'
+      if (app.phase === 'pointing') {
         pointing()
-      } else if (app.phase === 'pointing') {
-        app.phase = 'counting'
+      } else if (app.phase === 'counting') {
         counting()
       }
     })
