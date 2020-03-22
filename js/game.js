@@ -16,7 +16,7 @@ function Player()  {
   this.name = ""
   this.team = ""
   this.dealer = false
-  this.playedCards = "7 of clubs"
+  this.playedCards = ""
 }
 
 
@@ -46,6 +46,7 @@ var app = new Vue({
       myTurn: false,
       phase: 'init',
       nextRoundAvail: false
+
     }
   },
   methods: {
@@ -64,29 +65,36 @@ var app = new Vue({
         axios.get('http://'+ ip + ':5000/addToCrib/'+myName+'/'+e.target.innerText)
         .then(getMyCards)
       } else if (this.phase === 'pointing') {
-        if (e.target.innerText === "Pass") {
-          axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
+        if (this.nextRoundAvail) {
+          // Only the next round avail button is valid
+          if (e.target.innerText === "Next Round") {
+            axios.get('http://'+ ip + ':5000/nextRound/')
+          }
         } else {
-          // Go through my cards, find the card, and kill it
-          var cardToPlay = null
-          // Check the card we selected is valid
-          // Check it's my turn
-          // Check it doesn't exceed count
-          if (!this.myTurn) {
-            return
-          }
-          if (getCardValue(e.target.innerText) + this.pointCount > 31) {
-            return
-          }
-          for (var i = 0; i < this.myCards.length; i++) {
-            if (this.myCards[i] === e.target.innerText) {
-              // Get rid of one card
-              cardToPlay = this.myCards.splice(i,1)
+          if (e.target.innerText === "Pass") {
+            axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
+          } else {
+            // Go through my cards, find the card, and kill it
+            var cardToPlay = null
+            // Check the card we selected is valid
+            // Check it's my turn
+            // Check it doesn't exceed count
+            if (!this.myTurn) {
+              return
             }
+            if (getCardValue(e.target.innerText) + this.pointCount > 31) {
+              return
+            }
+            for (var i = 0; i < this.myCards.length; i++) {
+              if (this.myCards[i] === e.target.innerText) {
+                // Get rid of one card
+                cardToPlay = this.myCards.splice(i,1)
+              }
+            }
+            console.assert(cardToPlay != null, "playing card is null")
+            console.log(e.target.innerText);
+            axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
           }
-          console.assert(cardToPlay != null, "playing card is null")
-          console.log(e.target.innerText);
-          axios.get('http://'+ ip + ':5000/playCard/'+myName+'/'+e.target.innerText)
         }
       }
     }
@@ -110,6 +118,15 @@ function pointing() {
     app.nextRoundAvail = data.next_round_avail
     // Is it my turn? 
     app.myTurn = (data.player_turn === myName)
+
+    // Go through each player, filter out the array with cards that this player played
+    // Then set the players playedCards to the last in the list
+    app.players.forEach( function(player, idx) {
+      var cardsPlayedByPlayer = data.round_play.filter(function(play) {
+        return player.name == play.player
+      })
+      player.playedCards = cardsPlayedByPlayer[-1].card
+    })
     
   }
 }
