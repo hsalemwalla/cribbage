@@ -262,7 +262,7 @@ function counting() {
       app.players[i].playedCards = ""
       data.all_cards[app.players[i].name].forEach(function(card, idx) {
         app.players[i].playedCards += card
-        app.players[i].playedCards += "<br>"
+        app.players[i].playedCards += "\\n"
       })
 
       // Whos turn is it
@@ -281,7 +281,7 @@ function counting() {
     app.crib = ""
     data.all_cards['crib'].forEach(function(card, idx) {
       app.crib += card
-      app.crib += "<br>"
+      app.crib += "\\n"
     })
 
     // Scores
