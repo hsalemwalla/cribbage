@@ -184,7 +184,7 @@ def pointing():
                          'phase': game.phase,
                          'player_turn': game.turn.name,
                          'round_play': game.round_play,
-                         'next_round_avail': False
+                         'next_round_avail': False,
                          'scores': game.scores,
                          'card_flipped': str(game.card_flipped)}
             yield "data: {}\n\n".format(flask.json.dumps(game_data))
