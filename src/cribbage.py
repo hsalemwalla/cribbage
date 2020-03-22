@@ -9,7 +9,7 @@ class Game:
         self.players = []
         self.turn = None
         self.dealer = None
-
+        self.ready_for_new_hand_counter = 0
         self.scores = {'team1': 0, 'team2': 0}
 
         self.deck = Deck()
@@ -40,8 +40,8 @@ class Game:
         self.deal()
 
     def new_hand(self):
+        self.ready_for_new_hand_counter = 0
         self.who_passed = {p.name: False for p in self.players}
-        self.phase = 'pointing'
 
         dealer_index = (self.players.index(self.dealer) + 1) % 4
         self.dealer = self.players[dealer_index]
@@ -53,6 +53,7 @@ class Game:
 
         self.deal()
 
+        self.phase = 'pointing'
 
     def deal(self):
         self.deck.shuffle_deck()
