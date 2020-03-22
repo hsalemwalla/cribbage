@@ -3,7 +3,6 @@ from cribbage import Player, Team, Game
 import copy
 from flask import Flask, Response
 from flask_cors import CORS
-import time
 import flask
 
 app = Flask(__name__)
@@ -93,7 +92,7 @@ def game_ready():
 # *****************************************************************************
 @app.route('/playCard/<player_name>/<card>')
 def play_card(player_name, card):
-    card_symbol, card_suit = card.split(' ')
+    card_symbol, card_suit = card.split('%20')
     global game
     game.play_card(player_name, card_suit, card_symbol)
 
@@ -103,6 +102,15 @@ def play_card(player_name, card):
 @app.route('/getCardsForPlayer/<name>')
 def get_cards_for_player(name):
     return game.get_player_hand(name)
+
+
+@app.route('/addToCrib/<player_name>/<card>')
+def add_to_crib(player_name, card):
+    card_symbol, card_suit = card.split('%20')
+    global game
+    game.add_to_crib(player_name, card_suit, card_symbol)
+
+    return "OK"
 
 
 @app.route('/pointing')
