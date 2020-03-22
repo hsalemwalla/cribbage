@@ -4,20 +4,27 @@ import json
 
 
 class Game:
-    def __init__(self, teams):
-        self.teams = teams
-        self.team1 = teams[0]
-        self.team2 = teams[1]
-        self.num_teams = len(teams)
-
-        self.players = [teams[0].players[0], teams[1].players[0],
-                        teams[0].players[1], teams[1].players[1]]
+    def __init__(self):
+        self.teams = []
+        self.num_teams = 0
+        self.players = []
+        self.turn = None
 
         self.deck = Deck()
         self.card_flipped = None
-        self.deal()
+
+        self.phase = 'setup'
+        self.count = 0
+
+    def start_game(self, teams):
+        self.teams = teams
+        self.players = [teams[0].players[0], teams[1].players[0],
+                        teams[0].players[1], teams[1].players[1]]
+
         self.phase = 'pointing'
         self.count = 0
+
+        self.deal()
 
     def new_round(self):
         pass
@@ -43,6 +50,8 @@ class Game:
         # Verify the Card
         def verify_card():
             for c in player.hand:
+                # Verify players turn
+                is_player_turn = self.turn.name == player_name
                 # Verify card in hand
                 card_in_hand = (c.suit == card_suit) & (c.symbol == card_symbol)
                 # Verify card not in pointed
@@ -50,8 +59,9 @@ class Game:
                 # Verify card count <= 31
                 under_31 = (c.value + self.count) <= 31
 
-                if card_in_hand & card_not_pointed & under_31:
+                if is_player_turn & card_in_hand & card_not_pointed & under_31:
                     return c
+
         card = verify_card()
         if card is None:
             return "NOT A GOOD CARD"
@@ -62,6 +72,11 @@ class Game:
 
         # Add card to the points
         self.count += card.value
+
+        # Move turn to next player
+        all_player_names = [p.name for p in self.players]
+        next_player_index = (all_player_names.index(player_name) + 1) % 4
+        self.turn = self.players[next_player_index]
 
 
 class Team:

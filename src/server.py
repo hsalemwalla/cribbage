@@ -10,21 +10,14 @@ CORS(app)
 
 players = []
 teams = {'team1': Team(),
-        'team2': Team()}
+         'team2': Team()}
 
-game = None
-
-# team1 = Team([players[0], players[1]])
-# team2 = Team([players[2], players[3]])
-# game = Game([team1, team2])
-# game.deal()
+game = Game()
 
 
 # *****************************************************************************
 # Starting Game
 # *****************************************************************************
-
-
 @app.route('/addPlayer/<team>/<name>')
 def add_player(team, name):
     # Add player to player list
@@ -45,23 +38,21 @@ def start_game():
     global teams
 
     if len(players) == 4:
-        game = Game(list(teams.values()))
-        game.deal()
+        game.start_game(teams)
 
 
 def waiting_for_players():
-    try: 
-        curr_num_players = len(players)
-        setup_data = {'num_players': curr_num_players}
-
+    try:
+        global game
 
         # The first time this is called, we need to respond correctly
+        curr_num_players = len(players)
+        setup_data = {'num_players': curr_num_players,
+                      'ready': 'False',
+                      'player_names': [{'name': p.name, 'team': p.team} for p in game.players]}
         if curr_num_players == 4:
             setup_data['ready'] = 'True'
-            global game
-            setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
-        else:
-            setup_data['ready'] = 'False'
+
         yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 
         if curr_num_players < 4:
@@ -71,6 +62,7 @@ def waiting_for_players():
                 if len(players) != curr_num_players:
                     curr_num_players = len(players)
                     setup_data['num_players'] = curr_num_players
+                    setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
                     yield "data: {}\n\n".format(flask.json.dumps(setup_data))
 
             if curr_num_players == 4:
@@ -105,18 +97,27 @@ def play_card(player_name, card):
 def get_cards_for_player(name):
     return game.get_player_hand(name)
 
+
 @app.route('/pointing')
 def pointing():
     print("Client called pointing")
+
     def checking_for_pointed_cards():
         global game
+
+        game_data = {'new_count': game.count,
+                     'player_turn': game.turn.name,
+                     'card_flipped': game.card_flipped}
+        yield "data: {}\n\n".format(flask.json.dumps(game_data))
+
         cur_count = copy.deepcopy(game.count)
         while game.phase == 'pointing':
             print(game.phase)
             if game.count != cur_count:
-                game_data = {'new_count': game.count}
+                game_data = {'new_count': game.count,
+                             'player_turn': game.turn.name,
+                             'card_flipped': game.card_flipped}
                 cur_count = copy.deepcopy(game.count)
-                print(flask.json.dumps(setup_data))
                 yield "data: {}\n\n".format(flask.json.dumps(game_data))
 
         return 'data: Pointing Phase Done\n\n'
