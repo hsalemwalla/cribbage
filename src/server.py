@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from cribbage import Player, Team, Game
 import copy
 from flask import Flask, jsonify, Response
@@ -123,3 +124,8 @@ def pointing():
 
     return Response(checking_for_pointed_cards(),
                     mimetype="text/event-stream")
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True)
+
