@@ -143,13 +143,8 @@ var app = new Vue({
     },
     newHand(e) {
       console.log(e)
-      
-      var self = this
+      this.allDone = false
       axios.get('http://'+ ip + '/newHand')
-      .then(function(response) {
-        getMyCards()
-
-      })
     }
   }
 });
@@ -251,57 +246,55 @@ function counting() {
     console.log(e)
     var data = JSON.parse(e.data)
 
-    if (data.phase === 'counting') {
-      // The new count after the person played
-      app.drawnCard = data.card_flipped
-      // Show the next round avail button, and hide the pass button
+    // The new count after the person played
+    app.drawnCard = data.card_flipped
+    // Show the next round avail button, and hide the pass button
 
 
-      // Is it my turn? 
-      app.myTurn = (data.player_turn === myName)
+    // Is it my turn? 
+    app.myTurn = (data.player_turn === myName)
 
-      // Dealer and player turn
-      var player_num_turn = -1;
-      for (var i = 0; i < app.players.length; i++) {
-        // Set the players cards
-        app.players[i].playedCards = ""
-        data.all_cards[app.players[i].name].forEach(function(card, idx) {
-          app.players[i].playedCards += card
-          app.players[i].playedCards += "<br>"
-        })
-
-        // Whos turn is it
-        app.isPlayerTurn[i] = (app.players[i].name === data.player_turn)
-
-        // Set dealer
-        if (app.players[i].name === data.dealer) {
-          app.players[i].dealer = "Dealer"
-        } else {
-          app.players[i].dealer = ""
-        }
-      }
-
-      // Set the crib
-      
-      app.crib = ""
-      data.all_cards['crib'].forEach(function(card, idx) {
-        app.crib += card
-        app.crib += "<br>"
+    // Dealer and player turn
+    var player_num_turn = -1;
+    for (var i = 0; i < app.players.length; i++) {
+      // Set the players cards
+      app.players[i].playedCards = ""
+      data.all_cards[app.players[i].name].forEach(function(card, idx) {
+        app.players[i].playedCards += card
+        app.players[i].playedCards += "\\n"
       })
 
-      // Scores
-      app.team1Points = data.scores.team1
-      app.team2Points = data.scores.team2
-      app.team1ScoreTrack = getScoreTrack(app.team1Points)
-      app.team2ScoreTrack = getScoreTrack(app.team2Points)
-      
-      // Show the newHand button and close this event source
-      app.allDone = data.all_done_counting
-      if (app.allDone) {
-        countingEvSrc.close()
+      // Whos turn is it
+      app.isPlayerTurn[i] = (app.players[i].name === data.player_turn)
+
+      // Set dealer
+      if (app.players[i].name === data.dealer) {
+        app.players[i].dealer = "Dealer"
+      } else {
+        app.players[i].dealer = ""
       }
     }
 
+    // Set the crib
+
+    app.crib = ""
+    data.all_cards['crib'].forEach(function(card, idx) {
+      app.crib += card
+      app.crib += "\\n"
+    })
+
+    // Scores
+    app.team1Points = data.scores.team1
+    app.team2Points = data.scores.team2
+    app.team1ScoreTrack = getScoreTrack(app.team1Points)
+    app.team2ScoreTrack = getScoreTrack(app.team2Points)
+
+    // Show the newHand button and close this event source
+    app.allDone = data.all_done_counting
+    if (data.reset) {
+      countingEvSrc.close()
+      getMyCards()
+    }
   }
   console.log("Starting counting phase")
 }
@@ -316,7 +309,7 @@ function getMyCards() {
   } else if (app.phase === 'pointing') {
     app.phase = 'counting'
   } else if (app.phase === 'counting') {
-    app.phase = 'select-crib'
+    app.phase = 'select_crib'
   }
 
   // Clean up unless we are moving from pointing->counting
