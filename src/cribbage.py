@@ -60,6 +60,8 @@ class Game:
         dealing_deck = copy.deepcopy(self.deck.deck)
         for p in self.players:
             p.hand = [dealing_deck.pop() for _ in range(5)]
+            p.crib = []
+            p.pointed = []
 
         self.card_flipped = dealing_deck.pop()
 
@@ -189,7 +191,6 @@ class Game:
                 dealer_index = idx
 
         self.who_passed = {p.name: False for p in self.players}
-        all_player_names = [p.name for p in self.players]
         next_player_index = (dealer_index + 1) % 4
         self.turn = self.players[next_player_index]
 
@@ -245,6 +246,7 @@ class Player:
 
     def get_num_cards_played(self):
         return len(self.pointed)
+
 
 class Deck:
     def __init__(self):

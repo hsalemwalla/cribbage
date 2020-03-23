@@ -104,7 +104,7 @@ def play_card(player_name, card):
 
     # We should check if this is the last card to be 
     # played for the pointing phase
-    if (game.get_total_num_cards_played() == 16):
+    if game.get_total_num_cards_played() == 16:
         game.pointing_phase_done()
         return "OK"
 
@@ -168,7 +168,6 @@ def pointing():
                          'scores': game.scores,
                          'card_flipped': str(game.card_flipped)}
             yield "data: {}\n\n".format(flask.json.dumps(game_data))
-
 
             # Main pointing phase loop
             curr_trigger = copy.deepcopy(game.trigger_next_turn)
@@ -273,7 +272,7 @@ def new_hand():
 
 
 @app.route('/score/<team>/<score>')
-def update_score(team,score):
+def update_score(team, score):
     global game
     game.scores[team] = score
     game.trigger_next_turn += 1
@@ -282,4 +281,3 @@ def update_score(team,score):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
-
