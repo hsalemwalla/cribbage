@@ -327,7 +327,7 @@ function getMyCards() {
   }
   
   axios
-    .get('http://' + ip + '/getDealerName/'+myName)
+    .get('http://' + ip + '/getDealerName')
     .then(function(response) {
       // Go through and set the dealer
       app.players.forEach(function(player, idx) {
