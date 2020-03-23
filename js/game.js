@@ -30,7 +30,6 @@ var ip = getParameterByName('ip')
 function Player()  {
   this.name = ""
   this.team = ""
-  this.dealer = false
   this.playedCards = ""
   this.dealer = ""
 }
@@ -261,7 +260,7 @@ function counting() {
       app.players[i].playedCards = ""
       data.all_cards[app.players[i].name].forEach(function(card, idx) {
         app.players[i].playedCards += card
-        app.players[i].playedCards += "\\n"
+        app.players[i].playedCards += "\n"
       })
 
       // Whos turn is it
@@ -280,7 +279,7 @@ function counting() {
     app.crib = ""
     data.all_cards['crib'].forEach(function(card, idx) {
       app.crib += card
-      app.crib += "\\n"
+      app.crib += "\n"
     })
 
     // Scores
@@ -327,6 +326,17 @@ function getMyCards() {
     })
   }
   
+  axios
+    .get('http://' + ip + '/getDealerName/'+myName)
+    .then(function(response) {
+      // Go through and set the dealer
+      app.players.forEach(function(player, idx) {
+        if (player.name == response.data) {
+          player.dealer = "Dealer"
+        }
+      })
+    })
+
   
   axios
     .get('http://' + ip + '/getCardsForPlayer/'+myName)

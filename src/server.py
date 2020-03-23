@@ -72,6 +72,7 @@ def waiting_for_players():
                 print('line 72: starting game')
                 start_game()
                 setup_data["ready"] = 'True'
+                setup_data["dealer"] = ""
                 setup_data['player_names'] = [{'name': p.name, 'team': p.team} for p in game.players]
                 print('line 76: updating number of players')
                 yield "data: {}\n\n".format(flask.json.dumps(setup_data))
@@ -118,6 +119,13 @@ def play_card(player_name, card):
 
     return "OK"
 
+
+@app.route('/getDealerName')
+def get_dealer():
+    if game.dealer is not None:
+        return game.dealer.name
+    else:
+        return ""
 
 @app.route('/getCardsForPlayer/<name>')
 def get_cards_for_player(name):
