@@ -1,36 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <title>Online Cribbage</title>
-   <script src="https://unpkg.com/vue/dist/vue.js"></script>
-   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-   <!--<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>-->
+   <head>
+      <meta charset="UTF-8">
+      <title>Online Cribbage</title>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script src="https://unpkg.com/vue/dist/vue.js"></script>
+      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+      <!--<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>-->
+      <script defer src="./js/main.js"></script>
 
-   <script defer src="./js/main.js"></script>
 
-</head>
-<body>
-   <div id="main">
-      <h1> {{ title }} </h1>
-      <hr>
+      <!--Bootstrap-->
+      <!-- Latest compiled and minified CSS -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+      <!-- Optional theme -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+      <!-- Latest compiled and minified JavaScript -->
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 
-      <!--Player name: <input v-model="playerName"> <br>-->
-      Player Name: <input v-model="playerName">
-      <br>
-      Server ip: <input v-model="serverIp">
-      <br>
-      Select team: <br>
-      <input type="radio" id="team1" value="team1" v-model="team">
-      <label for="team1">Team 1</label>
-      <br>
-      <input type="radio" id="team2" value="team2" v-model="team">
-      <label for="team2">Team 2</label>
-      <br>
+      <link rel="stylesheet" type="text/css" href="./css/game.css">
 
-      <button v-on:click="startGame">Start Game</button>
+   </head>
 
-   </div>
+   <body>
+      <div id="main" class="container">
 
-</body>
+         <form class="form-signin">
+            <h2 class="form-signin-heading">{{ title }}</h2>
+
+            <label for="inputName" class="sr-only">Email address</label>
+            <input type="name" id="inputName" class="form-control" placeholder="Name" required autofocus>
+
+            <label for="inputServerIp" class="sr-only">Password</label>
+            <input type="serverIp" id="inputServerIp" class="form-control" placeholder="Server IP" required>
+
+            <br>
+
+            <!-- Default unchecked -->
+            <div class="custom-control custom-radio" style="text-align:center">
+               <input type="radio" class="custom-control-input" id="defaultUnchecked" name="team" value="team1">
+               <label class="custom-control-label" for="defaultUnchecked">Team 1</label>
+               &nbsp &nbsp
+               <input type="radio" class="custom-control-input" id="defaultChecked" name="team" value="team2">
+               <label class="custom-control-label" for="defaultChecked">Team 2</label>
+            </div>
+
+            <br>
+
+            <button class="btn btn-lg btn-primary btn-block" type="join">Join</button>
+         </form>
+
+      </div> <!-- /container -->
+
+   </body>
 </html>
