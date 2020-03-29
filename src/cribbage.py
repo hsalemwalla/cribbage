@@ -234,9 +234,9 @@ class Game:
         # Find the next player who
         # (1) Has not passed already
         # (2) Is not out of cards
+        next_player_index = (last_to_play_index + 1) % 4
+        next_player = self.players[next_player_index]
         if not all(self.who_passed):
-            next_player_index = (last_to_play_index + 1) % 4
-            next_player = self.players[next_player_index]
             while self.who_passed[next_player] or (len(self.players[next_player].pointed) < 4):
                 next_player_index = (next_player_index + 1) % 4
                 next_player = self.players[next_player_index]
