@@ -251,7 +251,7 @@ class Player:
 class Deck:
     def __init__(self):
         symbols = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-        suits = ['spades', 'hearts', 'clubs', 'diamonds']
+        suits = ['S', 'H', 'C', 'D']
 
         self.deck = [Card(suit, symb) for symb in symbols for suit in suits]
 
@@ -284,4 +284,4 @@ class Card:
         self.value = symbol_value_map[symbol]
 
     def __str__(self):
-        return '{} {}'.format(self.symbol, self.suit)
+        return '{}{}'.format(self.symbol, self.suit)
