@@ -106,14 +106,15 @@ class Game:
                 if (c.value + self.count) <= 31:
                     return False
             return True
+
         legal_pass = verify_pass()
         if legal_pass:
+            self.who_passed[player_name] = True
             # Move turn to next player
             self.find_next_player(player_name)
             # all_player_names = [p.name for p in self.players]
             # next_player_index = (all_player_names.index(player_name) + 1) % 4
             # self.turn = self.players[next_player_index]
-            self.who_passed[player_name] = True
             self.trigger_next_turn += 1
 
     def play_card(self, player_name, card_suit, card_symbol):
@@ -236,10 +237,20 @@ class Game:
         # (2) Is not out of cards
         next_player_index = (last_to_play_index + 1) % 4
         next_player = self.players[next_player_index]
-        if not all(self.who_passed):
-            while self.who_passed[next_player] or (len(self.players[next_player].pointed) < 4):
+        print("Debugging {}".format(self.who_passed))
+        if not all(self.who_passed.values()):
+            ctr = 0
+            while self.who_passed[next_player.name] or (len(self.players[next_player_index].pointed) == 4):
+                self.who_passed[next_player.name] = True
                 next_player_index = (next_player_index + 1) % 4
                 next_player = self.players[next_player_index]
+                if ctr == 4:
+                    # If no one else can play, just move to the next person in line
+                    # to go to the next round
+                    last_to_play = self.round_play[-1]['player']
+                    next_player = self.players[all_player_names.index(last_to_play)]
+                    break
+                ctr += 1
 
         # Set the turn
         self.turn = next_player

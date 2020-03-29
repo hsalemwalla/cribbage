@@ -20,6 +20,19 @@ body {
    font-size: 16px;
 }
 
+
+.gamepage {
+   max-width: 700px;
+   position: relative;
+   text-align: -webkit-center;
+   padding-left: 20px;
+
+}
+
+.scoreboard {
+   text-align: left;
+}
+
 table.myCards {
 }
 

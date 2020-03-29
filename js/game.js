@@ -36,7 +36,7 @@ function Player()  {
 
 
 function getCardValue(card) {
-  var value = card.split(' ')[0]
+  var value = card.substring(0,"10D".length-1)
   if (value === 'A') { return 1 }
   else if (value === 'J') { return 10 }
   else if (value === 'Q') { return 10 }
