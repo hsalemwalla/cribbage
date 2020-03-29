@@ -4,9 +4,10 @@
       <meta charset="UTF-8">
       <title>Online Cribbage</title>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
       <script src="https://unpkg.com/vue/dist/vue.js"></script>
+
       <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-      <!--<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>-->
       <script defer src="./js/main.js"></script>
 
 
@@ -18,27 +19,27 @@
       <!-- Latest compiled and minified JavaScript -->
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 
-      <link rel="stylesheet" type="text/css" href="./css/game.css">
+      <link rel="stylesheet" type="text/css" href="./css/main.css">
 
    </head>
 
    <body>
       <div id="main" class="container">
 
-         <form class="form-signin">
+         <div class="form-signin">
             <h2 class="form-signin-heading">{{ title }}</h2>
 
             <label for="inputName" class="sr-only">Name</label>
-            <input type="name" id="inputName" class="form-control" placeholder="Name" required autofocus>
+            <input type="name" id="inputName" v-model="playerName" class="form-control" placeholder="Name" name="playerName" required autofocus>
 
             <label for="inputServerIp" class="sr-only">Password</label>
-            <input type="serverIp" id="inputServerIp" class="form-control" placeholder="Server IP" required>
+            <input type="serverIp" id="inputServerIp" v-model="serverIp" class="form-control" placeholder="Server IP" name="ip" required>
 
             <br>
 
             <!-- Default unchecked -->
             <div class="custom-control custom-radio" style="text-align:center">
-               <input type="radio" class="custom-control-input" id="defaultUnchecked" name="team" value="team1">
+               <input type="radio" class="custom-control-input" id="defaultUnchecked" name="team" value="team1" checked>
                <label class="custom-control-label" for="defaultUnchecked">Team 1</label>
                &nbsp &nbsp
                <input type="radio" class="custom-control-input" id="defaultChecked" name="team" value="team2">
@@ -47,8 +48,10 @@
 
             <br>
 
-            <button class="btn btn-lg btn-primary btn-block" type="join">Join</button>
-         </form>
+            <button class="btn btn-lg btn-primary btn-block" type="join" v-on:click="startGame">Join</button>
+
+
+         </div>
 
       </div> <!-- /container -->
 
