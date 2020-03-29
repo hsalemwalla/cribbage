@@ -65,7 +65,7 @@ class Game:
 
         self.card_flipped = dealing_deck.pop()
 
-    def next_turn(self, player_name):
+    def next_count_turn(self, player_name):
         all_player_names = [p.name for p in self.players]
         next_player_index = (all_player_names.index(player_name) + 1) % 4
         self.turn = self.players[next_player_index]
@@ -109,9 +109,10 @@ class Game:
         legal_pass = verify_pass()
         if legal_pass:
             # Move turn to next player
-            all_player_names = [p.name for p in self.players]
-            next_player_index = (all_player_names.index(player_name) + 1) % 4
-            self.turn = self.players[next_player_index]
+            self.find_next_player(player_name)
+            # all_player_names = [p.name for p in self.players]
+            # next_player_index = (all_player_names.index(player_name) + 1) % 4
+            # self.turn = self.players[next_player_index]
             self.who_passed[player_name] = True
             self.trigger_next_turn += 1
 
@@ -149,10 +150,11 @@ class Game:
         self.round_play.append({'player': player_name,
                                 'card': str(card)})
 
-        # Move turn to next player
-        all_player_names = [p.name for p in self.players]
-        next_player_index = (all_player_names.index(player_name) + 1) % 4
-        self.turn = self.players[next_player_index]
+        # Move turn to next player who (1) has cards left and (2) has not passed
+        self.find_next_player(player_name)
+        # all_player_names = [p.name for p in self.players]
+        # next_player_index = (all_player_names.index(player_name) + 1) % 4
+        # self.turn = self.players[next_player_index]
         self.trigger_next_turn += 1
 
     def add_to_crib(self, player_name, card_suit, card_symbol):
@@ -214,13 +216,33 @@ class Game:
         # Update whose turn it is
         last_to_play = self.round_play[-1]['player']
 
-        all_player_names = [p.name for p in self.players]
-        next_player_index = (all_player_names.index(last_to_play) + 1) % 4
-        self.turn = self.players[next_player_index]
+        self.find_next_player(last_to_play)
+        # all_player_names = [p.name for p in self.players]
+        # next_player_index = (all_player_names.index(last_to_play) + 1) % 4
+        # self.turn = self.players[next_player_index]
 
         # Reset round_play
         self.round_play = []
         self.trigger_next_turn += 1
+
+    def find_next_player(self, last_to_play):
+        # Find all the players
+        all_player_names = [p.name for p in self.players]
+        # Find index of last player
+        last_to_play_index = all_player_names.index(last_to_play)
+
+        # Find the next player who
+        # (1) Has not passed already
+        # (2) Is not out of cards
+        if not all(self.who_passed):
+            next_player_index = (last_to_play_index + 1) % 4
+            next_player = self.players[next_player_index]
+            while self.who_passed[next_player] or (len(self.players[next_player].pointed) < 4):
+                next_player_index = (next_player_index + 1) % 4
+                next_player = self.players[next_player_index]
+
+        # Set the turn
+        self.turn = next_player
 
 
 class Team:

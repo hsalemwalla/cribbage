@@ -98,7 +98,7 @@ def play_card(player_name, card):
     if game.phase == 'counting':
         # Just move to the next turn if its the current player
         if game.turn.name == player_name:
-            game.next_turn(player_name)
+            game.next_count_turn(player_name)
 
     if game.phase != 'pointing':
         return "OK"
