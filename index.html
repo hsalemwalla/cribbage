@@ -39,10 +39,10 @@
 
             <!-- Default unchecked -->
             <div class="custom-control custom-radio" style="text-align:center">
-               <input type="radio" class="custom-control-input" id="defaultUnchecked" name="team" value="team1" checked>
+               <input type="radio" v-model="team" class="custom-control-input" id="defaultUnchecked" name="team" value="team1" checked>
                <label class="custom-control-label" for="defaultUnchecked">Team 1</label>
                &nbsp &nbsp
-               <input type="radio" class="custom-control-input" id="defaultChecked" name="team" value="team2">
+               <input type="radio" v-model="team" class="custom-control-input" id="defaultChecked" name="team" value="team2">
                <label class="custom-control-label" for="defaultChecked">Team 2</label>
             </div>
 
