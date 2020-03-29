@@ -34,6 +34,14 @@ table.myCards {
    height: 100px;
 }
 
+img.card_played {
+   width: 50px;
+}
+
+img.card_in_hand {
+   width: 100px;
+}
+
 .player {
    border: 1px solid black;
    padding: 10px;
