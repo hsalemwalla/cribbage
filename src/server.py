@@ -114,7 +114,7 @@ def play_card(player_name, card):
         game.pass_turn(player_name)
     else: 
         print(player_name + " attempting to play: " + card)
-        card_symbol, card_suit = card.split(' ')
+        card_symbol, card_suit = card
         game.play_card(player_name, card_suit, card_symbol)
 
     return "OK"
@@ -127,6 +127,7 @@ def get_dealer():
     else:
         return ""
 
+
 @app.route('/getCardsForPlayer/<name>')
 def get_cards_for_player(name):
     return game.get_player_hand(name)
@@ -135,7 +136,7 @@ def get_cards_for_player(name):
 @app.route('/addToCrib/<player_name>/<card>')
 def add_to_crib(player_name, card):
     if card != 'Pass':
-        card_symbol, card_suit = card.split(' ')
+        card_symbol, card_suit = card
         global game
         game.add_to_crib(player_name, card_suit, card_symbol)
         print([str(c) for c in game.dealer.crib])
