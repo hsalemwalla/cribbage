@@ -26,11 +26,14 @@ body {
    position: relative;
    text-align: -webkit-center;
    padding-left: 20px;
-
 }
 
 .scoreboard {
    text-align: left;
+}
+
+.scoreboard_progress {
+   padding-left: 10px;
 }
 
 table.myCards {
@@ -38,24 +41,42 @@ table.myCards {
 
 .card-button {
    width: 50px;
-   height: 120px;
+   height: 150px;
 }
 
 .card {
-   border: 1px solid black;
-   width: 25px;
+   padding: 10px;
+   /*border: 1px solid black;*/
    height: 100px;
 }
 
-img.card_played {
-   width: 50px;
+.card_played {
+   height: 50px;
+   margin-right: 10px;
 }
 
-img.card_in_hand {
+.card_in_hand {
    width: 100px;
 }
 
+.crib_card {
+   width: 75px;
+}
+
+.other_players_cards {
+   width: 50px;
+}
+
+.card_drawn {
+   height: 100px;
+}
+
+.middle_box {
+   text-align: -webkit-center;
+}
+
 .player {
+   text-align: -webkit-center;
    border: 1px solid black;
    padding: 10px;
    width: 100px;

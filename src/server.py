@@ -103,19 +103,20 @@ def play_card(player_name, card):
     if game.phase != 'pointing':
         return "OK"
 
-    # We should check if this is the last card to be 
-    # played for the pointing phase
-    if game.get_total_num_cards_played() == 16:
-        game.pointing_phase_done()
-        return "OK"
-
-    if card == "Pass":
+    if card == "Go":
         print(player_name + " attempting to pass")
         game.pass_turn(player_name)
     else: 
         print(player_name + " attempting to play: " + card)
         card_symbol, card_suit = card[:-1], card[-1]
         game.play_card(player_name, card_suit, card_symbol)
+
+    # We should check if this is the last card to be 
+    # played for the pointing phase
+    print(game.get_total_num_cards_played())
+    if game.get_total_num_cards_played() == 16:
+        game.pointing_phase_done()
+        return "OK"
 
     return "OK"
 
@@ -135,7 +136,7 @@ def get_cards_for_player(name):
 
 @app.route('/addToCrib/<player_name>/<card>')
 def add_to_crib(player_name, card):
-    if card != 'Pass':
+    if card != 'Go':
         card_symbol, card_suit = card[:-1], card[-1]
         global game
         game.add_to_crib(player_name, card_suit, card_symbol)
@@ -155,7 +156,7 @@ def pointing():
             # Waiting for all players
             if len(game.dealer.crib) < 4:
                 game_data = {'new_count': game.count,
-                             'dealer': "",
+                             'dealer': game.dealer.name,
                              'phase': game.phase,
                              'player_turn': "",
                              'round_play': game.round_play,

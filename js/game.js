@@ -8,21 +8,6 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-function getScoreTrack(score) {
-  if (score < 0) {
-    return ""
-  }
-  var track = ""
-  for (var i = 0; i < score; i++) {
-    if (i % 5 === 0) {
-      track += "|"
-    }
-    track += "."
-  }
-
-  return track
-}
-
 var myName = getParameterByName('name')
 var myTeam = getParameterByName('team')
 var ip = getParameterByName('ip')
@@ -53,13 +38,12 @@ var app = new Vue({
       team: myTeam,
       players: [],
       team1Points: 0,
-      team1ScoreTrack: "",
       team2Points: 0,
-      team2ScoreTrack: "",
       drawnCard: null,
       pointCount: 0,
       myCards: [],
-      crib: "",
+      playedCards: [],
+      crib: [],
       myTurn: false,
       phase: 'init',
       nextRoundAvail: false,
@@ -68,6 +52,16 @@ var app = new Vue({
     }
   },
   methods: {
+    getPercentage(value) {
+      perc = value / 129 * 100
+      return perc + "%"
+    },
+    getCardUrl(card) {
+      if (card === "Waiting for other players") {
+        return ""
+      }
+      return "res/" + card + ".png"
+    },
     updateScore(e) {
       switch(e.currentTarget.id) {
         case 'team1ScoreIncrease':
@@ -89,28 +83,29 @@ var app = new Vue({
       }
     },
     selectCard(e) {
+      cardValue = e.target.value;
       if (this.phase === 'select_crib') {
         console.assert(this.myCards.length === 5, "myCards is not 5") 
         // Go through my cards, find the card, and kill it
         var cribCard = null
         for (var i = 0; i < this.myCards.length; i++) {
-          if (this.myCards[i] === e.target.innerText) {
+          if (this.myCards[i] === cardValue) {
             // Get rid of one card
             cribCard = this.myCards.splice(i,1)
           }
         }
         console.assert(cribCard != null, "cribCard is null")
-        axios.get('http://'+ ip + '/addToCrib/'+myName+'/'+e.target.innerText)
+        axios.get('http://'+ ip + '/addToCrib/'+myName+'/'+cardValue)
         .then(getMyCards)
       } else if (this.phase === 'pointing') {
         if (this.nextRoundAvail) {
           // Only the next round avail button is valid
-          if (e.target.innerText === "Next Round") {
+          if (cardValue === "Next Round") {
             axios.get('http://'+ ip + '/nextRound')
           }
         } else {
-          if (e.target.innerText === "Pass") {
-            axios.get('http://'+ ip + '/playCard/'+myName+'/'+e.target.innerText)
+          if (cardValue === "Go") {
+            axios.get('http://'+ ip + '/playCard/'+myName+'/'+cardValue)
           } else {
             // Go through my cards, find the card, and kill it
             var cardToPlay = null
@@ -120,22 +115,22 @@ var app = new Vue({
             if (!this.myTurn) {
               return
             }
-            if (getCardValue(e.target.innerText) + this.pointCount > 31) {
+            if (getCardValue(cardValue) + this.pointCount > 31) {
               return
             }
             for (var i = 0; i < this.myCards.length; i++) {
-              if (this.myCards[i] === e.target.innerText) {
+              if (this.myCards[i] === cardValue) {
                 // Get rid of one card
                 cardToPlay = this.myCards.splice(i,1)
               }
             }
             console.assert(cardToPlay != null, "playing card is null")
-            console.log(e.target.innerText);
-            axios.get('http://'+ ip + '/playCard/'+myName+'/'+e.target.innerText)
+            console.log(cardValue);
+            axios.get('http://'+ ip + '/playCard/'+myName+'/'+cardValue)
           }
         }
       } else if (this.phase === 'counting') {
-        if (e.target.innerText === "Pass") {
+        if (cardValue === "Go") {
           axios.get('http://'+ ip + '/playCard/'+myName+'/cribNextTurn')
         }
       }
@@ -187,6 +182,11 @@ function pointing() {
 
       // Go through each player, filter out the array with cards that this player played
       // Then set the players playedCards to the last in the list
+      app.playedCards = []
+      data.round_play.forEach(function(play, idx) {
+        app.playedCards.push(play.card)
+      })
+
       app.players.forEach( function(player, idx) {
         var cardsPlayedByPlayer = data.round_play.filter(function(play) {
           return player.name == play.player
@@ -200,8 +200,6 @@ function pointing() {
       // scores
       app.team1Points = data.scores.team1
       app.team2Points = data.scores.team2
-      app.team1ScoreTrack = getScoreTrack(app.team1Points)
-      app.team2ScoreTrack = getScoreTrack(app.team2Points)
     } else {
       if (data.phase === 'counting') {
         app.pointCount = data.new_count
@@ -226,8 +224,6 @@ function pointing() {
         // Scores
         app.team1Points = data.scores.team1
         app.team2Points = data.scores.team2
-        app.team1ScoreTrack = getScoreTrack(app.team1Points)
-        app.team2ScoreTrack = getScoreTrack(app.team2Points)
         pointingEvSrc.close()
         getMyCards()
 
@@ -257,10 +253,9 @@ function counting() {
     var player_num_turn = -1;
     for (var i = 0; i < app.players.length; i++) {
       // Set the players cards
-      app.players[i].playedCards = ""
+      app.players[i].playedCards = []
       data.all_cards[app.players[i].name].forEach(function(card, idx) {
-        app.players[i].playedCards += card
-        app.players[i].playedCards += "\n"
+        app.players[i].playedCards.push(card)
       })
 
       // Whos turn is it
@@ -276,17 +271,14 @@ function counting() {
 
     // Set the crib
 
-    app.crib = ""
+    app.crib = []
     data.all_cards['crib'].forEach(function(card, idx) {
-      app.crib += card
-      app.crib += "\n"
+      app.crib.push(card)
     })
 
     // Scores
     app.team1Points = data.scores.team1
     app.team2Points = data.scores.team2
-    app.team1ScoreTrack = getScoreTrack(app.team1Points)
-    app.team2ScoreTrack = getScoreTrack(app.team2Points)
 
     // Show the newHand button and close this event source
     app.allDone = data.all_done_counting
@@ -316,7 +308,7 @@ function getMyCards() {
     app.drawnCard = null
     app.pointCount = 0
     app.myCards = []
-    app.crib = ""
+    app.crib = []
     app.myTurn = false
     app.nextRoundAvail = false
     app.allDone = false

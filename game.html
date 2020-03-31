@@ -31,20 +31,24 @@
                   <td>
                      <button id="team1ScoreDecrease" v-on:click="updateScore"> - </button>
                      <button id="team1ScoreIncrease" v-on:click="updateScore"> + </button>
-                     <b>Team 1:</b> {{ team1Points }}
+                     <b>Team 1:</b> <!--{{ team1Points }}-->
                    </td>
-                   <td>
-                      {{ team1ScoreTrack }}
+                   <td class="scoreboard_progress">
+                      <div class="progress" style="width: 500px; margin-bottom: 0px">
+                         <div class="progress-bar" role="progressbar" v-bind:style="{ width: getPercentage(team1Points) }" valuemin="0" max="129">{{ team1Points }}</div>
+                      </div>
                    </td>
                </tr>
                <tr>
                   <td>
                      <button id="team2ScoreDecrease" v-on:click="updateScore"> - </button>
                      <button id="team2ScoreIncrease" v-on:click="updateScore"> + </button>
-                     <b>Team 2:</b> {{ team2Points }}
+                     <b>Team 2:</b> 
                   </td>
-                   <td>
-                      {{ team2ScoreTrack }}
+                   <td class="scoreboard_progress">
+                      <div class="progress" style="width: 500px; margin-bottom: 0px">
+                         <div class="progress-bar" role="progressbar" v-bind:style="{ width: getPercentage(team2Points) }" valuemin="0" max="129">{{ team2Points }}</div>
+                      </div>
                    </td>
                </tr>
             </table>
@@ -53,28 +57,54 @@
 
          <table width="80%" height="100px">
             <tr>
-               <td width="150px"><b>Drawn card:</b> <br>{{ drawnCard }}</td>
+               <td width="150px" style="vertical-align: middle">
+                  <b>Point count:</b>  {{ pointCount }} 
+               </td>
+               <td>
+               </td>
+               <td width="150px" style="vertical-align: middle; text-align:center">
+                  <u><b>Drawn card</b></u><br>
+                  <div v-if="drawnCard != null">
+                     <img class="card_drawn" v-bind:src="getCardUrl(drawnCard)"/>
+                  </div>
+               </td>
+            </tr>
+            <tr>
                <td></td>
                <td v-bind:class="[{activePlayer: isPlayerTurn[2]}]" class="player">
                   <div v-if="players.length == 4">
                         {{ players[2].dealer }}<br>
                      <b>{{ players[2].name }}</b><br>
-                        {{ players[2].playedCards }} <br>
+                     <div v-if="phase=='counting'">
+                        <table>
+                           <tr>
+                              <td v-for="card in players[2].playedCards">
+                                 <img type="image" class="other_players_cards" v-bind:src="getCardUrl(card)"/>
+                              </td>
+                           </tr>
+                        </table>
+                     </div>
                   </div>
                </td>
                <td></td>
-               <td><b>Point count:</b> <br> {{ pointCount }}</td>
             </tr>
             <tr>
-               <td></td>
                <td v-bind:class="[{activePlayer: isPlayerTurn[1]}]" class="player">
                   <div v-if="players.length == 4">
                         {{ players[1].dealer }}<br>
                      <b>{{ players[1].name }}</b><br>
-                        {{ players[1].playedCards }} <br>
+                     <div v-if="phase=='counting'">
+                        <table>
+                           <tr>
+                              <td v-for="card in players[1].playedCards">
+                                 <img type="image" class="other_players_cards" v-bind:src="getCardUrl(card)"/>
+                              </td>
+                           </tr>
+                        </table>
+                     </div>
                   </div>
                </td>
-               <td>
+               <td class="middle_box">
                   <div v-if="myTurn">
                      It's your turn!
                   </div>
@@ -83,22 +113,33 @@
                   <div v-if="players.length == 4">
                         {{ players[3].dealer }}<br>
                      <b>{{ players[3].name }}</b><br>
-                        {{ players[3].playedCards }} <br>
+                     <div v-if="phase=='counting'">
+                        <table>
+                           <tr>
+                              <td v-for="card in players[3].playedCards">
+                                 <img type="image" class="other_players_cards" v-bind:src="getCardUrl(card)"/>
+                              </td>
+                           </tr>
+                        </table>
+                     </div>
                   </div>
                </td>
             </tr>
             <tr>
-               <td>
-                  <div>
-                     {{ crib }}
-                  </div>
-               </td>
                <td></td>
                <td v-bind:class="[{activePlayer: isPlayerTurn[0]}]" class="player">
                   <div v-if="players.length == 4">
                         {{ players[0].dealer }}<br>
                      <b>{{ players[0].name }}</b><br>
-                        {{ players[0].playedCards }} <br>
+                     <div v-if="phase=='counting'">
+                        <table>
+                           <tr>
+                              <td v-for="card in players[0].playedCards">
+                                 <img type="image" class="other_players_cards" v-bind:src="getCardUrl(card)"/>
+                              </td>
+                           </tr>
+                        </table>
+                     </div>
                   </div>
                </td>
                <td></td>
@@ -106,25 +147,54 @@
          </table>
 
          <br>
-         <hr>
+         <div v-if="phase=='pointing'">
+            <b><u>Cards played</u></b>
+            <table>
+               <tr>
+                  <td class="card_played" v-for="card in playedCards">
+                     <img type="image" class="card_played" v-bind:src="getCardUrl(card)"/>
+                  </td>
+               </tr>
+            </table>
+         </div>
+         <div v-if="phase=='counting'">
+            <b><u>Crib</u></b>
+            <table>
+               <tr>
+                  <td v-for="card in crib">
+                     <img type="image" class="crib_card" v-bind:src="getCardUrl(card)"/>
+                  </td>
+               </tr>
+            </table>
+         </div>
+
+         <br>
+         <b><u>Hand</u></b>
          <table id="myCardsTable" class="myCards" >
             <tr>
                <td class="card" v-for="card in myCards">
-                  <button class="card-button" v-on:click="selectCard"> {{ card }} </button>
+                  <input type="image" class="card_in_hand" v-on:click="selectCard" v-bind:value="card" v-bind:src="getCardUrl(card)"/>
+                  <!--<input type="image" class="card_in_hand" -->
                </td>
-               <td class="card">
+               <!--<td class="card">-->
+                  <!--<div>-->
+                     <!--<input type="image" class="card_in_hand" src="res/AS.png" />-->
+
+                  <!--</div>-->
+               <!--</td>-->
+               <td class="card" style="padding-left: 50px">
                   <div>
-                     <button class="card-button" v-on:click="selectCard"> Pass </button>
+                     <button class="card-button" value="Go" v-on:click="selectCard"> Go </button>
                   </div>
                </td>
                <td class="card" v-if="nextRoundAvail && myTurn">
                   <div>
-                     <button class="card-button" v-on:click="selectCard"> Next Round </button>
+                     <button class="card-button" value="Next Round" v-on:click="selectCard"> Next Round </button>
                   </div>
                </td>
                <td class="card" v-if="allDone">
                   <div>
-                     <button class="card-button" v-on:click="newHand"> Next Hand </button>
+                     <button class="card-button" value="Next Hand" v-on:click="newHand"> Next Hand </button>
                   </div>
                </td>
             </tr>
